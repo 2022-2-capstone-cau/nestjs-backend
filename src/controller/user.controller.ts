@@ -1,6 +1,8 @@
-import { Body, Controller, Get, Post, Put, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, Post, Put, Req, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
 import { UserService } from "../service/user.service";
-import { AccessTokenDto, NicknameDto } from "../dto/user.dto";
+import { AccessTokenDto, NicknameDto } from "../DTO/user.dto";
+import { IkakaoLogin, INicknameCheck } from "../Type/response/user.type.response";
+import { Request } from "express";
 
 @Controller("/api/v1/user")
 export class UserController {
@@ -12,31 +14,32 @@ export class UserController {
 	}
 
 	@Post("/auth/kakao")
-	kakaoLogin(@Body() accessTokenDto: AccessTokenDto) {
-		return this.userService.getHello(accessTokenDto);
+	kakaoLogin(@Body() accessTokenDto: AccessTokenDto): Promise<IkakaoLogin> {
+		return this.userService.kakaoLogin(accessTokenDto);
 	}
 
+	@UseGuards()
 	@Put("/me/nickname")
-	@UseGuards()
-	nicknameUpdate(@Body() nicknameDto: NicknameDto) {
-		return this.userService.getHello(nicknameDto);
+	nicknameUpdate(@Body() nicknameDto: NicknameDto): Promise<void> {
+		return this.userService.nicknameUpdate(nicknameDto);
 	}
 
+	@UseGuards()
 	@Post("/me/nickname/validate")
-	@UseGuards()
-	nicknameCheck(@Body() nicknameDto: NicknameDto) {
-		return this.userService.getHello(nicknameDto);
+	nicknameCheck(@Body() nicknameDto: NicknameDto): Promise<INicknameCheck> {
+		return this.userService.nicknameCheck(nicknameDto);
 	}
 
+	@UseGuards()
+	@UseInterceptors()
 	@Put("/me/image")
-	@UseGuards()
-	profileImgUpdate() {
-		return this.userService.getHello(1);
+	profileImgUpdate(@UploadedFile() file: Express.Multer.File): Promise<void> {
+		return this.userService.profileImgUpdate(file);
 	}
 
-	@Get("/me/mypage")
 	@UseGuards()
-	getMyPage() {
-		return this.userService.getHello(1);
+	@Get("/me/mypage")
+	getMyPage(@Req() req: Request) {
+		return this.userService.getMyPage(req);
 	}
 }
