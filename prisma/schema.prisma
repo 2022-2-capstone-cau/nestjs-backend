@@ -11,9 +11,94 @@ datasource db {
 }
 
 model User {
-  user_id Int @id @default(autoincrement())
+  user_id Int    @id @default(autoincrement())
+  email   String @unique @db.VarChar(50)
+  profile String @db.Text
+  name    String @unique @db.VarChar(10)
+
+  library      UserLib?
+  user_info    UserStatus?
+  USER_SETTING UserSetting?
+
+  @@map("USER")
 }
 
-model Lecture {
-  lecture_id Int @id @default(autoincrement())
+model Category {
+  category String @id @db.VarChar(10)
+
+  user_librarys UserLib[]
+  CATEGORY_BOOK CategoryBook[]
+
+  @@map("CATEGORY")
+}
+
+model UserLib {
+  user_id       Int     @id
+  best_category String? @db.VarChar(10)
+  book_total    Int     @db.Integer
+  profile       String  @db.Text
+
+  category Category? @relation(fields: [best_category], references: [category])
+  user     User      @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+
+  books Book[]
+  rooms Room[] @relation("users")
+  attns Room[] @relation("attns")
+
+  @@map("USER_LIB")
+}
+
+model UserStatus {
+  user_id      Int      @id
+  return_date  DateTime @db.Timestamp(0)
+  rental_total Int      @default(0)
+
+  user User @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+
+  @@map("USER_STATUS")
+}
+
+model UserSetting {
+  user_id Int @id
+
+  user User @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+
+  @@map("USER_SETTING")
+}
+
+model Book {
+  book_id   Int    @id @default(autoincrement())
+  img       String @db.Text
+  name      String @db.VarChar(10)
+  publisher String @db.VarChar(10)
+  ISPN      String @db.VarChar(50)
+  author    String @db.VarChar(20)
+  user_id   Int?
+
+  user       UserLib?       @relation(fields: [user_id], references: [user_id], onDelete: SetNull)
+  categories CategoryBook[]
+
+  @@map("BOOK")
+}
+
+model CategoryBook {
+  category_name String @db.VarChar(10)
+  book_id       Int    @db.Integer
+
+  category Category @relation(fields: [category_name], references: [category])
+  book     Book     @relation(fields: [book_id], references: [book_id], onDelete: Cascade)
+
+  @@id([category_name, book_id])
+  @@map("CATEGORY_BOOK")
+}
+
+model Room {
+  user_id Int @db.Integer
+  attn_id Int @db.Integer
+
+  user UserLib @relation("users", fields: [user_id], references: [user_id])
+  attn UserLib @relation("attns", fields: [attn_id], references: [user_id])
+
+  @@id([user_id, attn_id])
+  @@map("ROOM")
 }

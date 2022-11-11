@@ -1,4 +1,4 @@
-import { IsString } from "class-validator";
+import { IsNumber, IsString } from "class-validator";
 
 export class AccessTokenDto {
 	@IsString()
@@ -8,4 +8,9 @@ export class AccessTokenDto {
 export class NicknameDto {
 	@IsString()
 	nickname: string;
+}
+
+export class UserIdDto {
+	@IsNumber()
+	user_id: number;
 }

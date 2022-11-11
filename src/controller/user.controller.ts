@@ -8,11 +8,6 @@ import { Request } from "express";
 export class UserController {
 	constructor(private readonly userService: UserService) {}
 
-	@Get()
-	getHello(): string {
-		return this.userService.getHello(1);
-	}
-
 	@Post("/auth/kakao")
 	kakaoLogin(@Body() accessTokenDto: AccessTokenDto): Promise<IkakaoLogin> {
 		return this.userService.kakaoLogin(accessTokenDto);
