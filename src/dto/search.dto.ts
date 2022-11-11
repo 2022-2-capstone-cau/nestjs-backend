@@ -4,6 +4,5 @@ export class SearchBooksDto {
 	@IsString()
 	query: string;
 
-	@IsString()
 	cursor?: string;
 }

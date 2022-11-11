@@ -7,7 +7,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url      = "postgresql://postgres:aA@456456@localhost:5432/capstone?schema=public"
 }
 
 model User {
@@ -18,8 +18,9 @@ model User {
 
   library      UserLib?
   user_info    UserStatus?
-  USER_SETTING UserSetting?
+  user_setting UserSetting?
 
+  @@index([email], type: Hash)
   @@map("USER")
 }
 
@@ -27,7 +28,7 @@ model Category {
   category String @id @db.VarChar(10)
 
   user_librarys UserLib[]
-  CATEGORY_BOOK CategoryBook[]
+  category_book CategoryBook[]
 
   @@map("CATEGORY")
 }

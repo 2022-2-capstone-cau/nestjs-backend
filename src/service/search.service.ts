@@ -1,8 +1,12 @@
 import { Injectable } from "@nestjs/common";
+import { SearchBooksDto } from "../DTO/search.dto";
 
 @Injectable()
 export class SearchService {
-	getHello(): string {
-		return "Hello World!";
+	searchBooks(searchBooksDto: SearchBooksDto) {
+		return {
+			list: [],
+			nextCursor: {},
+		};
 	}
 }
