@@ -6,7 +6,7 @@ import { JwtAuthGuard } from "../common/guards/jwt.guard";
 export class PostController {
 	constructor(private readonly postService: PostService) {}
 
-	@UseGuards(JwtAuthGuard)
+	// @UseGuards(JwtAuthGuard)
 	@Get("/book/isbn/:ISBN")
 	LookupISPN(@Param("ISBN") isbn: string) {
 		return this.postService.LookupISPN(isbn);
