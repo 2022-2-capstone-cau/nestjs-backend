@@ -7,7 +7,11 @@ import { PassportModule } from "@nestjs/passport";
 import { JwtStrategy } from "../utils/jwt";
 
 @Module({
-	imports: [HttpModule.register({}), PassportModule, JwtModule.register({ secret: "capstone" })],
+	imports: [
+		HttpModule.register({}),
+		PassportModule,
+		JwtModule.register({ secret: "capstone", signOptions: { expiresIn: 1000 * 60 * 60 * 24 * 31 * 6 } }),
+	],
 	controllers: [UserController],
 	providers: [UserService, JwtStrategy],
 })

@@ -42,6 +42,7 @@ model UserLib {
   category Category? @relation(fields: [best_category], references: [category])
   user     User      @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
 
+  rents Rent[]
   books Book[]
   rooms Room[] @relation("users")
   attns Room[] @relation("attns")
@@ -68,16 +69,18 @@ model UserSetting {
 }
 
 model Book {
-  book_id   Int    @id @default(autoincrement())
-  img       String @db.Text
-  name      String @db.VarChar(10)
-  publisher String @db.VarChar(10)
-  ISPN      String @db.VarChar(50)
-  author    String @db.VarChar(20)
-  user_id   Int?
+  book_id   Int     @id @default(autoincrement())
+  img       String  @db.Text
+  name      String  @db.VarChar(10)
+  publisher String  @db.VarChar(10)
+  ISPN      String  @db.VarChar(50)
+  author    String  @db.VarChar(20)
+  user_id   Int?    @db.Integer
+  is_rent   Boolean @default(false) @db.Boolean
 
   user       UserLib?       @relation(fields: [user_id], references: [user_id], onDelete: SetNull)
   categories CategoryBook[]
+  rents      Rent[]
 
   @@map("BOOK")
 }
@@ -102,4 +105,16 @@ model Room {
 
   @@id([user_id, attn_id])
   @@map("ROOM")
+}
+
+model Rent {
+  user_id Int      @db.Integer
+  book_id Int      @db.Integer
+  date    DateTime @default(now()) @db.Timestamp(0)
+
+  user UserLib @relation(fields: [user_id], references: [user_id])
+  book Book    @relation(fields: [book_id], references: [book_id], onDelete: Cascade)
+
+  @@id([user_id, book_id])
+  @@map("RENT")
 }

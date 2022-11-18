@@ -1,8 +1,9 @@
-import { IsString } from "class-validator";
+import { IsNumber, IsString } from "class-validator";
 
 export class SearchBooksDto {
 	@IsString()
 	query: string;
 
-	cursor?: string;
+	@IsNumber()
+	cursor?: number;
 }

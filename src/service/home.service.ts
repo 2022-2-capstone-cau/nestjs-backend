@@ -13,8 +13,8 @@ export class HomeService {
 
 		return {
 			rent: {
-				fastestRemainingReturnDay: userStatus.return_date,
-				numberOfRental: userStatus.rental_total,
+				fastestRemainingReturnDay: userStatus?.return_date,
+				numberOfRental: userStatus?.rental_total,
 			},
 			recommend: {
 				category: {

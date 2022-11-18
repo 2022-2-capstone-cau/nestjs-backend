@@ -1,18 +1,20 @@
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { HttpService } from "@nestjs/axios";
-import { IkakaoResponse } from "../Type/common/user.type.common";
 import { firstValueFrom } from "rxjs";
 import { catchError, map } from "rxjs/operators";
+import { UserEmailDto } from "../DTO/user.dto";
+import { PostRepository } from "../repository/post.repository";
+import { BookIdDto } from "../DTO/post.dto";
 
 @Injectable()
 export class PostService {
-	constructor(private readonly http: HttpService) {}
+	constructor(private readonly http: HttpService, private readonly postRepository: PostRepository) {}
 
 	async LookupISPN(isbn: string) {
 		const data: any = await firstValueFrom(
 			this.http
 				.get(
-					`https://www.nl.go.kr/NL/search/openApi/search.do?cert_key=${"1d69550499e62a8520be4b1b8d509d7df8829133ab22c539d14899258f19eae5"}&result_style=json&page_no=1&page_size=1&isbn=${isbn}`,
+					`https://www.nl.go.kr/NL/search/openApi/search.do?key=${"1d69550499e62a8520be4b1b8d509d7df8829133ab22c539d14899258f19eae5"}&detailSearch=true&isbnOp=isbn&isbnCode=${isbn}&apiType=json`,
 					{
 						headers: {},
 					},
@@ -34,5 +36,80 @@ export class PostService {
 			pubYear: data?.result[0].pubYearInfo,
 			tags: data?.result[0].kdcName1s,
 		};
+	}
+
+	async getPostDetail(book_id: number) {
+		const exBook = await this.postRepository.book.findUnique({
+			where: { book_id },
+			include: { categories: true },
+		});
+
+		return {
+			book_id: exBook.book_id,
+			thumbnailUrl: exBook.img,
+			title: exBook.name,
+			desc: exBook.name,
+			publisher: exBook.publisher,
+			writer: exBook.author,
+			translator: "",
+			tags: exBook.categories[0].category_name,
+			isbn: exBook.ISPN,
+			isRent: exBook.is_rent,
+		};
+	}
+
+	async registerNewBook(registerBookDto, user: UserEmailDto) {
+		const [data, exUser] = await Promise.all([
+			this.LookupISPN(registerBookDto.isbn),
+			this.postRepository.user.findUnique({
+				where: {
+					email: user.email,
+				},
+			}),
+		]);
+
+		const exCategory = await this.postRepository.category.findUnique({ where: { category: data.tags } });
+
+		if (exCategory) {
+			this.postRepository.category.create({ data: { category: data.tags } });
+		}
+
+		const newBook = await this.postRepository.book.create({
+			data: {
+				img: data.thumbnailUrl,
+				name: data.title,
+				publisher: data.publisher,
+				ISPN: registerBookDto.isbn,
+				author: data.writer,
+				user_id: exUser.user_id,
+			},
+		});
+
+		return { book_id: newBook.book_id };
+	}
+
+	async rentBook(bookIdDto: BookIdDto, user: UserEmailDto) {
+		// rent 처리
+		await this.postRepository.book.update({
+			where: { book_id: parseInt(bookIdDto.book_id) },
+			data: { is_rent: true },
+		});
+
+		// 현재 상태 갱신
+		const { user_id } = await this.postRepository.user.findUnique({ where: { email: user.email } });
+		await this.postRepository.userStatus.update({
+			where: { user_id },
+			data: { rental_total: { increment: 1 } },
+		});
+
+		// rent 정보 생성
+		await this.postRepository.rent.create({
+			data: {
+				user_id: user_id,
+				book_id: parseInt(bookIdDto.book_id),
+			},
+		});
+
+		return;
 	}
 }

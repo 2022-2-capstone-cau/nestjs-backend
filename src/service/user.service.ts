@@ -101,6 +101,7 @@ export class UserService {
 
 		return {
 			user: {
+				user_id: exUser.user_id,
 				name: exUser.name,
 				profile: exUser.profile,
 			},
