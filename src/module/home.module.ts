@@ -5,7 +5,8 @@ import { JwtStrategy } from "../utils/jwt";
 import { JwtModule } from "@nestjs/jwt";
 
 @Module({
-	controllers: [HomeController, JwtModule],
+	imports: [JwtModule],
+	controllers: [HomeController],
 	providers: [HomeService, JwtStrategy],
 })
 export class HomeModule {}

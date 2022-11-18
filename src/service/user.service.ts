@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { HttpService } from "@nestjs/axios";
-import { AccessTokenDto, NicknameDto, UserEmailDto } from "../DTO/user.dto";
+import { AccessTokenDto, CreateUserDto, NicknameDto, UserEmailDto } from "../DTO/user.dto";
 import { catchError, map } from "rxjs/operators";
 import { UserRepository } from "../repository/user.repository";
 import { IkakaoResponse } from "../Type/common/user.type.common";
@@ -15,7 +15,7 @@ export class UserService {
 		private readonly jwtService: JwtService,
 	) {}
 
-	async kakaoLogin(accessTokenDto: AccessTokenDto) {
+	async kakaoLogin(accessTokenDto: AccessTokenDto | CreateUserDto) {
 		const data: IkakaoResponse = await firstValueFrom(
 			this.http
 				.get("https://kapi.kakao.com/v2/user/me", {
@@ -38,13 +38,13 @@ export class UserService {
 		if (!exUser) {
 			const newUser = await this.userRepository.createUser({
 				email: data.kakao_account.email,
-				name: accessTokenDto.nickname,
-				profile: accessTokenDto?.profile,
+				name: (<CreateUserDto>accessTokenDto)?.nickname,
+				profile: (<CreateUserDto>accessTokenDto)?.profile,
 			});
 
 			return {
 				accesstoken: this.jwtService.sign({ email: newUser.email }),
-				requiresProfile: !accessTokenDto?.profile,
+				requiresProfile: !newUser?.profile,
 			};
 		}
 
@@ -82,7 +82,11 @@ export class UserService {
 		return { allow: false };
 	}
 
-	async profileImgUpdate(file: Express.Multer.File) {
+	async profileImgUpdate(profile: string, user: UserEmailDto) {
+		await this.userRepository.user.update({
+			where: { email: user.email },
+			data: { profile },
+		});
 		return;
 	}
 

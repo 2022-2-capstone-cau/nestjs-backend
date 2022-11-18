@@ -3,14 +3,20 @@ import { UserService } from "../service/user.service";
 import { AccessTokenDto, NicknameDto } from "../DTO/user.dto";
 import { IkakaoLogin, INicknameCheck } from "../Type/response/user.type.response";
 import { JwtAuthGuard } from "../common/guards/jwt.guard";
+import { FileInterceptor } from "@nestjs/platform-express";
 
 @Controller("/api/v1/user")
 export class UserController {
 	constructor(private readonly userService: UserService) {}
 
+	@UseInterceptors(FileInterceptor("profile"))
 	@Post("/auth/kakao")
-	kakaoLogin(@Body() accessTokenDto: AccessTokenDto): Promise<IkakaoLogin> {
-		return this.userService.kakaoLogin(accessTokenDto);
+	kakaoLogin(@Body() accessTokenDto: AccessTokenDto, @UploadedFile() file: Express.Multer.File): Promise<IkakaoLogin> {
+		return this.userService.kakaoLogin({
+			accesstoken: accessTokenDto.accesstoken,
+			nickname: accessTokenDto?.nickname,
+			profile: file?.destination,
+		});
 	}
 
 	@UseGuards(JwtAuthGuard)
@@ -26,10 +32,10 @@ export class UserController {
 	}
 
 	@UseGuards(JwtAuthGuard)
-	@UseInterceptors()
+	@UseInterceptors(FileInterceptor("profile"))
 	@Put("/me/image")
-	profileImgUpdate(@UploadedFile() file: Express.Multer.File): Promise<void> {
-		return this.userService.profileImgUpdate(file);
+	profileImgUpdate(@UploadedFile() file: Express.Multer.File, @Req() req): Promise<void> {
+		return this.userService.profileImgUpdate(file?.destination, req.user);
 	}
 
 	@UseGuards(JwtAuthGuard)
