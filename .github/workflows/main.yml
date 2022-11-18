@@ -33,4 +33,4 @@ jobs:
           aws-region: ap-northeast-2
 
       - name: Upload to S3
-        run: aws s3 cp --recursive --region ap-northeast-2 out s3://yongs-blog
+        run: aws s3 cp --recursive --region ap-northeast-2 out s3://cau-capstone
