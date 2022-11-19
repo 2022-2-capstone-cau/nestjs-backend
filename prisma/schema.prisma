@@ -20,6 +20,8 @@ model User {
   user_info    UserStatus?
   user_setting UserSetting?
 
+  searchs Search[]
+
   @@index([email], type: Hash)
   @@map("USER")
 }
@@ -133,4 +135,14 @@ model Rent {
 
   @@id([user_id, book_id])
   @@map("RENT")
+}
+
+model Search {
+  search_id Int    @id @default(autoincrement()) @db.Integer
+  user_id   Int    @db.Integer
+  content   String @db.VarChar(50)
+
+  user User @relation(fields: [user_id], references: [user_id])
+
+  @@map("SEARCH")
 }

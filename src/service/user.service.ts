@@ -41,6 +41,17 @@ export class UserService {
 				name: (<CreateUserDto>accessTokenDto)?.nickname,
 				profile: (<CreateUserDto>accessTokenDto)?.profile,
 			});
+			await this.userRepository.userLib.create({
+				data: {
+					user_id: newUser.user_id,
+					profile: newUser.profile,
+				},
+			});
+			await this.userRepository.userStatus.create({
+				data: {
+					user_id: newUser.user_id,
+				},
+			});
 
 			return {
 				accesstoken: this.jwtService.sign({ email: newUser.email, user_id: newUser.user_id }),
