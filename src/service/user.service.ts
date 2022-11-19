@@ -36,15 +36,14 @@ export class UserService {
 
 		// 없는 유저이면 회원가입 후 로그인
 		if (!exUser) {
-			const newUser = await this.userRepository.createUser({
-				email: data.kakao_account.email,
-				name: (<CreateUserDto>accessTokenDto)?.nickname,
-				profile: (<CreateUserDto>accessTokenDto)?.profile,
+			const newUser = await this.userRepository.user.create({
+				data: {
+					email: data.kakao_account.email,
+				},
 			});
 			await this.userRepository.userLib.create({
 				data: {
 					user_id: newUser.user_id,
-					profile: newUser.profile,
 				},
 			});
 			await this.userRepository.userStatus.create({
@@ -55,14 +54,14 @@ export class UserService {
 
 			return {
 				accesstoken: this.jwtService.sign({ email: newUser.email, user_id: newUser.user_id }),
-				requiresProfile: !newUser?.profile,
+				requiresProfile: false,
 			};
 		}
 
 		// 있는 유저이면 로그인
 		return {
 			accesstoken: this.jwtService.sign({ email: exUser?.email, user_id: exUser.user_id }),
-			requiresProfile: !exUser?.profile,
+			requiresProfile: true,
 		};
 	}
 

@@ -14,7 +14,7 @@ model User {
   user_id Int     @id @default(autoincrement())
   email   String  @unique @db.VarChar(50)
   profile String? @db.Text
-  name    String  @unique @db.VarChar(10)
+  name    String? @db.VarChar(10)
 
   library      UserLib?
   user_info    UserStatus?

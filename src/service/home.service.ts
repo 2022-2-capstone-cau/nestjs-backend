@@ -7,26 +7,38 @@ export class HomeService {
 	constructor(private readonly homeRepository: HomeRepository) {}
 
 	async homeScreenData(user: JwtUserDto) {
-		// const userStatus: any = await this.homeRepository.user.findUnique({
-		// 	where: { email: user.email },
-		// });
+		const userStatus = await this.homeRepository.userStatus.findUnique({
+			where: { user_id: parseInt(user.user_id) },
+		});
 
-		return this.homeRepository.$queryRaw`
-			SELECT *
-			FROM "USER"
-		`;
+		const date = await this.homeRepository.rent.findMany({
+			where: {
+				user_id: parseInt(user.user_id),
+				book: {
+					is_rent: true,
+				},
+			},
+			orderBy: {
+				date: "asc",
+			},
+		});
 
-		// return {
-		// 	rent: {
-		// 		fastestRemainingReturnDay: userStatus?.return_date,
-		// 		numberOfRental: userStatus?.rental_total,
-		// 	},
-		// 	recommend: {
-		// 		category: {
-		// 			title: "",
-		// 		},
-		// 		list: [],
-		// 	},
-		// };
+		// return this.homeRepository.$queryRaw`
+		// 	SELECT *
+		// 	FROM "USER"
+		// `;
+
+		return {
+			rent: {
+				fastestRemainingReturnDay: date[0].date,
+				numberOfRental: userStatus?.rental_total,
+			},
+			recommend: {
+				category: {
+					title: "",
+				},
+				list: [],
+			},
+		};
 	}
 }
