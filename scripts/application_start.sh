@@ -1,3 +1,3 @@
 cd /home/ubuntu/app
-npm run start:kill
-npm run start:prod
+pm2 kill
+pm2 start ./dist/main.js
