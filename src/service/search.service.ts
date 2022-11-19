@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { SearchBooksDto } from "../DTO/search.dto";
+import { SearchBooksDto } from "../dto/search.dto";
 import { SearchRepository } from "../repository/search.repository";
 
 @Injectable()

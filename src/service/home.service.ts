@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { HomeRepository } from "../repository/home.repository";
-import { JwtUserDto } from "../DTO/user.dto";
+import { JwtUserDto } from "../dto/user.dto";
 
 @Injectable()
 export class HomeService {

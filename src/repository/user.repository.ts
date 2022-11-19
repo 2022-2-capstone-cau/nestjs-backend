@@ -1,6 +1,6 @@
 import { INestApplication, Injectable, OnModuleInit } from "@nestjs/common";
 import { PrismaClient } from "@prisma/client";
-import { UserDao } from "../DAO/user.dao";
+import { UserDao } from "../dao/user.dao";
 
 @Injectable()
 export class UserRepository extends PrismaClient implements OnModuleInit {

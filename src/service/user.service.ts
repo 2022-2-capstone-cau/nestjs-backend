@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { HttpService } from "@nestjs/axios";
-import { AccessTokenDto, CreateUserDto, NicknameDto, JwtUserDto } from "../DTO/user.dto";
+import { AccessTokenDto, CreateUserDto, NicknameDto, JwtUserDto } from "../dto/user.dto";
 import { catchError, map } from "rxjs/operators";
 import { UserRepository } from "../repository/user.repository";
 import { IkakaoResponse } from "../Type/common/user.type.common";

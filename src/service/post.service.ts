@@ -2,9 +2,9 @@ import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { HttpService } from "@nestjs/axios";
 import { firstValueFrom } from "rxjs";
 import { catchError, map } from "rxjs/operators";
-import { JwtUserDto } from "../DTO/user.dto";
+import { JwtUserDto } from "../dto/user.dto";
 import { PostRepository } from "../repository/post.repository";
-import { BookIdDto, CreateMsgDto } from "../DTO/post.dto";
+import { BookIdDto, CreateMsgDto } from "../dto/post.dto";
 
 @Injectable()
 export class PostService {
