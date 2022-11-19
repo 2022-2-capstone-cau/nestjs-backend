@@ -13,6 +13,6 @@ async function bootstrap() {
 	app.useGlobalInterceptors(new ErrorResponseInterceptor());
 	// app.useGlobalInterceptors(new SuccessResponse());
 
-	await app.listen(3000);
+	await app.listen(80);
 }
 bootstrap();
