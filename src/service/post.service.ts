@@ -112,4 +112,48 @@ export class PostService {
 
 		return;
 	}
+
+	async returnBook(bookIdDto: BookIdDto, user: UserEmailDto) {
+		// return 처리
+		await this.postRepository.book.update({
+			where: { book_id: parseInt(bookIdDto.book_id) },
+			data: { is_rent: false },
+		});
+
+		// 현재 상태 갱신
+		const { user_id } = await this.postRepository.user.findUnique({ where: { email: user.email } });
+		await this.postRepository.userStatus.update({
+			where: { user_id },
+			data: { rental_total: { decrement: 1 } },
+		});
+
+		return;
+	}
+
+	async getRooms(user: UserEmailDto) {
+		const exUser = await this.postRepository.user.findUnique({
+			where: { email: user.email },
+		});
+
+		const data = await this.postRepository.room.findMany({
+			where: {
+				user_id: exUser.user_id,
+			},
+			select: {
+				attn_id: true,
+				last_message: true,
+				attn: {
+					select: {
+						user: true,
+					},
+				},
+			},
+		});
+
+		return data.map((e) => ({
+			attn_id: e.attn_id,
+			last_message: e.last_message,
+			name: e.attn.user.name,
+		}));
+	}
 }

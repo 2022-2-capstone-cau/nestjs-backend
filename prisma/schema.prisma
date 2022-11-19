@@ -97,8 +97,9 @@ model CategoryBook {
 }
 
 model Room {
-  user_id Int @db.Integer
-  attn_id Int @db.Integer
+  user_id      Int    @db.Integer
+  attn_id      Int    @db.Integer
+  last_message String @db.VarChar(255)
 
   user UserLib @relation("users", fields: [user_id], references: [user_id])
   attn UserLib @relation("attns", fields: [attn_id], references: [user_id])

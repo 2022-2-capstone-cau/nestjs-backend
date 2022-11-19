@@ -30,4 +30,16 @@ export class PostController {
 	rentBook(@Body() bookId: BookIdDto, @Req() req) {
 		return this.postService.rentBook(bookId, req.user);
 	}
+
+	@UseGuards(JwtAuthGuard)
+	@Post("/return")
+	returnBook(@Body() bookId: BookIdDto, @Req() req) {
+		return this.postService.returnBook(bookId, req.user);
+	}
+
+	@UseGuards(JwtAuthGuard)
+	@Get("/chat")
+	getRooms(@Req() req) {
+		return this.postService.getRooms(req.user);
+	}
 }
