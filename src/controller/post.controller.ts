@@ -1,7 +1,7 @@
-import { Body, Controller, Get, Param, ParseIntPipe, Post, Req, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, Param, ParseIntPipe, Post, Query, Req, UseGuards } from "@nestjs/common";
 import { PostService } from "../service/post.service";
 import { JwtAuthGuard } from "../common/guards/jwt.guard";
-import { BookIdDto, RegisterBookDto } from "../DTO/post.dto";
+import { BookIdDto, CreateMsgDto, RegisterBookDto } from "../DTO/post.dto";
 
 @Controller("/api/v1/post")
 export class PostController {
@@ -38,8 +38,20 @@ export class PostController {
 	}
 
 	@UseGuards(JwtAuthGuard)
-	@Get("/chat")
+	@Get("/room")
 	getRooms(@Req() req) {
 		return this.postService.getRooms(req.user);
+	}
+
+	@UseGuards(JwtAuthGuard)
+	@Get("/chat")
+	getChats(@Query("attn_id", ParseIntPipe) attn_id, @Req() req) {
+		return this.postService.getChats(attn_id, req.user);
+	}
+
+	@UseGuards(JwtAuthGuard)
+	@Post("/chat")
+	createChats(@Body() createMsgDto: CreateMsgDto, @Req() req) {
+		return this.postService.createChats(createMsgDto, req.user);
 	}
 }

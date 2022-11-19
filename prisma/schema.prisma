@@ -11,10 +11,10 @@ datasource db {
 }
 
 model User {
-  user_id Int    @id @default(autoincrement())
-  email   String @unique @db.VarChar(50)
-  profile String @db.Text
-  name    String @unique @db.VarChar(10)
+  user_id Int     @id @default(autoincrement())
+  email   String  @unique @db.VarChar(50)
+  profile String? @db.Text
+  name    String  @unique @db.VarChar(10)
 
   library      UserLib?
   user_info    UserStatus?
@@ -36,8 +36,8 @@ model Category {
 model UserLib {
   user_id       Int     @id
   best_category String? @db.VarChar(10)
-  book_total    Int     @db.Integer
-  profile       String  @db.Text
+  book_total    Int     @default(0) @db.Integer
+  profile       String? @db.Text
 
   category Category? @relation(fields: [best_category], references: [category])
   user     User      @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
@@ -51,9 +51,9 @@ model UserLib {
 }
 
 model UserStatus {
-  user_id      Int      @id
-  return_date  DateTime @db.Timestamp(0)
-  rental_total Int      @default(0)
+  user_id      Int       @id
+  return_date  DateTime? @db.Timestamp(0)
+  rental_total Int       @default(0)
 
   user User @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
 
@@ -70,7 +70,7 @@ model UserSetting {
 
 model Book {
   book_id   Int     @id @default(autoincrement())
-  img       String  @db.Text
+  img       String? @db.Text
   name      String  @db.VarChar(10)
   publisher String  @db.VarChar(10)
   ISPN      String  @db.VarChar(50)
@@ -97,15 +97,30 @@ model CategoryBook {
 }
 
 model Room {
-  user_id      Int    @db.Integer
-  attn_id      Int    @db.Integer
-  last_message String @db.VarChar(255)
+  user_id      Int      @db.Integer
+  attn_id      Int      @db.Integer
+  last_message String   @db.VarChar(255)
+  last_date    DateTime @default(now()) @db.Timestamp(0)
 
   user UserLib @relation("users", fields: [user_id], references: [user_id])
   attn UserLib @relation("attns", fields: [attn_id], references: [user_id])
 
+  chats Chat[] @relation("room")
+
   @@id([user_id, attn_id])
   @@map("ROOM")
+}
+
+model Chat {
+  user_id Int      @db.Integer
+  attn_id Int      @db.Integer
+  date    DateTime @default(now()) @db.Timestamp(0)
+  message String   @db.Text
+
+  room Room @relation("room", fields: [user_id, attn_id], references: [user_id, attn_id])
+
+  @@id([user_id, attn_id, date])
+  @@map("CHAT")
 }
 
 model Rent {

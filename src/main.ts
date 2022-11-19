@@ -9,9 +9,9 @@ async function bootstrap() {
 	const app = await NestFactory.create(AppModule);
 
 	app.useGlobalPipes(new ValidationPipe());
-	app.useGlobalInterceptors(new SuccessResponse());
-	app.useGlobalInterceptors(new ErrorResponseInterceptor());
 	app.useGlobalFilters(new GlobalExceptionFilter());
+	app.useGlobalInterceptors(new ErrorResponseInterceptor());
+	// app.useGlobalInterceptors(new SuccessResponse());
 
 	await app.listen(3000);
 }

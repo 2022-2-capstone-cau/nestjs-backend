@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { HttpService } from "@nestjs/axios";
-import { AccessTokenDto, CreateUserDto, NicknameDto, UserEmailDto } from "../DTO/user.dto";
+import { AccessTokenDto, CreateUserDto, NicknameDto, JwtUserDto } from "../DTO/user.dto";
 import { catchError, map } from "rxjs/operators";
 import { UserRepository } from "../repository/user.repository";
 import { IkakaoResponse } from "../Type/common/user.type.common";
@@ -43,19 +43,19 @@ export class UserService {
 			});
 
 			return {
-				accesstoken: this.jwtService.sign({ email: newUser.email }),
+				accesstoken: this.jwtService.sign({ email: newUser.email, user_id: newUser.user_id }),
 				requiresProfile: !newUser?.profile,
 			};
 		}
 
 		// 있는 유저이면 로그인
 		return {
-			accesstoken: this.jwtService.sign({ email: exUser?.email }),
+			accesstoken: this.jwtService.sign({ email: exUser?.email, user_id: exUser.user_id }),
 			requiresProfile: !exUser?.profile,
 		};
 	}
 
-	async nicknameUpdate(nicknameDto: NicknameDto, user: UserEmailDto) {
+	async nicknameUpdate(nicknameDto: NicknameDto, user: JwtUserDto) {
 		const exUser = await this.userRepository.findUserByEmail(user.email);
 
 		if (!exUser) {
@@ -82,15 +82,19 @@ export class UserService {
 		return { allow: false };
 	}
 
-	async profileImgUpdate(profile: string, user: UserEmailDto) {
+	async profileImgUpdate(profile: string, user: JwtUserDto) {
 		await this.userRepository.user.update({
 			where: { email: user.email },
+			data: { profile },
+		});
+		await this.userRepository.userLib.update({
+			where: { user_id: parseInt(user.user_id) },
 			data: { profile },
 		});
 		return;
 	}
 
-	async getMyPage(user: UserEmailDto) {
+	async getMyPage(user: JwtUserDto) {
 		const exUser: any = await this.userRepository.user.findUnique({
 			where: { email: user.email },
 			include: {

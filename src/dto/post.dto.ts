@@ -11,3 +11,11 @@ export class RegisterBookDto {
 export class BookIdDto {
 	book_id: string;
 }
+
+export class CreateMsgDto {
+	@IsString()
+	message: string;
+
+	@IsString()
+	attn_id: any;
+}

@@ -2,9 +2,9 @@ import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { HttpService } from "@nestjs/axios";
 import { firstValueFrom } from "rxjs";
 import { catchError, map } from "rxjs/operators";
-import { UserEmailDto } from "../DTO/user.dto";
+import { JwtUserDto } from "../DTO/user.dto";
 import { PostRepository } from "../repository/post.repository";
-import { BookIdDto } from "../DTO/post.dto";
+import { BookIdDto, CreateMsgDto } from "../DTO/post.dto";
 
 @Injectable()
 export class PostService {
@@ -30,7 +30,7 @@ export class PostService {
 		return {
 			thumbnailUrl: "http://cover.nl.go.kr/" + data?.result[0]?.imageUrl,
 			title: data?.result[0]?.titleInfo,
-			desc: data?.result[0],
+			desc: data?.result[0]?.titleInfo,
 			publisher: data?.result[0].pubInfo,
 			writer: data?.result[0].authorInfo,
 			pubYear: data?.result[0].pubYearInfo,
@@ -58,7 +58,7 @@ export class PostService {
 		};
 	}
 
-	async registerNewBook(registerBookDto, user: UserEmailDto) {
+	async registerNewBook(registerBookDto, user: JwtUserDto) {
 		const [data, exUser] = await Promise.all([
 			this.LookupISPN(registerBookDto.isbn),
 			this.postRepository.user.findUnique({
@@ -88,7 +88,7 @@ export class PostService {
 		return { book_id: newBook.book_id };
 	}
 
-	async rentBook(bookIdDto: BookIdDto, user: UserEmailDto) {
+	async rentBook(bookIdDto: BookIdDto, user: JwtUserDto) {
 		// rent 처리
 		await this.postRepository.book.update({
 			where: { book_id: parseInt(bookIdDto.book_id) },
@@ -113,7 +113,7 @@ export class PostService {
 		return;
 	}
 
-	async returnBook(bookIdDto: BookIdDto, user: UserEmailDto) {
+	async returnBook(bookIdDto: BookIdDto, user: JwtUserDto) {
 		// return 처리
 		await this.postRepository.book.update({
 			where: { book_id: parseInt(bookIdDto.book_id) },
@@ -130,7 +130,7 @@ export class PostService {
 		return;
 	}
 
-	async getRooms(user: UserEmailDto) {
+	async getRooms(user: JwtUserDto) {
 		const exUser = await this.postRepository.user.findUnique({
 			where: { email: user.email },
 		});
@@ -155,5 +155,42 @@ export class PostService {
 			last_message: e.last_message,
 			name: e.attn.user.name,
 		}));
+	}
+
+	async getChats(attn_id: number, user: JwtUserDto) {
+		return this.postRepository.chat.findMany({
+			where: {
+				user_id: parseInt(user.user_id),
+				attn_id: attn_id,
+			},
+			orderBy: {
+				date: "desc",
+			},
+		});
+	}
+
+	async createChats(createMsgDto: CreateMsgDto, user: JwtUserDto) {
+		const newMsg = await this.postRepository.chat.create({
+			data: {
+				user_id: parseInt(user.user_id),
+				attn_id: parseInt(createMsgDto.attn_id),
+				message: createMsgDto.message,
+			},
+		});
+
+		this.postRepository.room.update({
+			where: {
+				user_id_attn_id: {
+					user_id: parseInt(user.user_id),
+					attn_id: parseInt(createMsgDto.attn_id),
+				},
+			},
+			data: {
+				last_message: newMsg.message,
+				last_date: newMsg.date,
+			},
+		});
+
+		return newMsg;
 	}
 }
