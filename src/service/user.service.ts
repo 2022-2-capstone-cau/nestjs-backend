@@ -84,7 +84,7 @@ export class UserService {
 		const exUser = await this.userRepository.findUserByNickname(nicknameDto.nickname);
 
 		// 없는 닉네임이면 true
-		if (!exUser) {
+		if (!exUser.length) {
 			return { allow: true };
 		}
 

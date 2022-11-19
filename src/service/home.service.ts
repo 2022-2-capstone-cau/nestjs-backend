@@ -7,6 +7,24 @@ export class HomeService {
 	constructor(private readonly homeRepository: HomeRepository) {}
 
 	async homeScreenData(user: JwtUserDto) {
+		// return await this.homeRepository.$queryRaw`
+		// 	SELECT u.user_id AS id
+		// 	FROM "USER" AS u
+		// 	GROUP BY u.user_id
+		// `;
+		// return await this.homeRepository.$queryRaw`
+		//  SELECT *
+		//  FROM (
+		//  	SELECT c.category_name, COUNT(*)
+		//  	FROM "RENT" AS r
+		//  	JOIN "BOOK" AS b USING(book_id)
+		//  	JOIN "CATEGORY_BOOK" AS c USING(book_id)
+		//  	WHERE r.user_id = 1
+		//  	GROUP BY c.category_name
+		//  ) AS t
+		//  ORDER BY t.count DESC
+		//  LIMIT 1
+		// `;
 		const userStatus = await this.homeRepository.userStatus.findUnique({
 			where: { user_id: parseInt(user.user_id) },
 		});
@@ -23,6 +41,29 @@ export class HomeService {
 			},
 		});
 
+		const cate: any = await this.homeRepository.$queryRaw`
+		 SELECT *
+		 FROM (
+		 	SELECT c.category_name, COUNT(*)
+		 	FROM "RENT" AS r
+		 	JOIN "BOOK" AS b USING(book_id)
+		 	JOIN "CATEGORY_BOOK" AS c USING(book_id)
+		 	WHERE r.user_id = 1
+		 	GROUP BY c.category_name
+		 ) AS t
+		 ORDER BY t.count DESC
+		 LIMIT 1
+		`;
+
+		const recom: any = await this.homeRepository.categoryBook.findMany({
+			where: {
+				category_name: cate?.category_name,
+			},
+			include: {
+				book: true,
+			},
+		});
+
 		// return this.homeRepository.$queryRaw`
 		// 	SELECT *
 		// 	FROM "USER"
@@ -34,10 +75,12 @@ export class HomeService {
 				numberOfRental: userStatus?.rental_total,
 			},
 			recommend: {
-				category: {
-					title: "",
-				},
-				list: [],
+				category: cate?.category_name,
+				list: recom.map((e) => ({
+					book_id: e.book.book_id,
+					title: e.book.name,
+					thumbnailUrl: e.book.img,
+				})),
 			},
 		};
 	}

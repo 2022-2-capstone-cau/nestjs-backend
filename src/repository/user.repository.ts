@@ -37,7 +37,7 @@ export class UserRepository extends PrismaClient implements OnModuleInit {
 	}
 
 	findUserByNickname(name: string) {
-		return this.user.findUnique({
+		return this.user.findMany({
 			where: { name },
 		});
 	}

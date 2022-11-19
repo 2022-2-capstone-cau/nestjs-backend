@@ -6,7 +6,7 @@ import { JwtAuthGuard } from "../common/guards/jwt.guard";
 export class HomeController {
 	constructor(private readonly homeService: HomeService) {}
 
-	// @UseGuards(JwtAuthGuard)
+	@UseGuards(JwtAuthGuard)
 	@Get()
 	homeScreenData(@Req() req) {
 		return this.homeService.homeScreenData(req?.user);
