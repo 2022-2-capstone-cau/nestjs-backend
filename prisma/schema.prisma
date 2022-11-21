@@ -12,7 +12,7 @@ datasource db {
 
 model User {
   user_id Int     @id @default(autoincrement())
-  email   BigInt  @unique @db.BigInt
+  email   String  @unique @db.VarChar(20)
   profile String? @db.Text
   name    String? @db.VarChar(10)
 

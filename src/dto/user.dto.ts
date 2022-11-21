@@ -36,5 +36,5 @@ export class UserIdDto {
 export class JwtUserDto {
 	user_id: any;
 
-	email: number;
+	email: string;
 }

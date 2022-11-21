@@ -9,6 +9,12 @@ import { FileInterceptor } from "@nestjs/platform-express";
 export class UserController {
 	constructor(private readonly userService: UserService) {}
 
+	@UseGuards(JwtAuthGuard)
+	@Get("/auth/kakao")
+	testToken(@Req() req) {
+		return req.user;
+	}
+
 	@Post("/auth/kakao")
 	kakaoLogin(@Body() accessTokenDto: AccessTokenDto): Promise<IkakaoLogin> {
 		return this.userService.kakaoLogin({

@@ -33,13 +33,13 @@ export class UserService {
 				),
 		);
 		console.log(data);
-		const exUser = await this.userRepository.findUserByEmail(data.id);
+		const exUser = await this.userRepository.findUserByEmail(data.id.toString());
 
 		// 없는 유저이면 회원가입 후 로그인
 		if (!exUser) {
 			const newUser = await this.userRepository.user.create({
 				data: {
-					email: BigInt(data.id),
+					email: data.id.toString(),
 				},
 			});
 			await this.userRepository.userLib.create({
@@ -52,13 +52,13 @@ export class UserService {
 					user_id: newUser.user_id,
 				},
 			});
-
+			console.log("newUser", newUser);
 			return {
 				accesstoken: this.jwtService.sign({ email: newUser.email, user_id: newUser.user_id }),
 				requiresProfile: false,
 			};
 		}
-
+		console.log("exUser", exUser);
 		// 있는 유저이면 로그인
 		return {
 			accesstoken: this.jwtService.sign({ email: exUser?.email, user_id: exUser.user_id }),
@@ -74,7 +74,7 @@ export class UserService {
 		}
 
 		await this.userRepository.user.update({
-			where: { email: BigInt(user.email) },
+			where: { email: user.email },
 			data: { name: nicknameDto.nickname },
 		});
 
@@ -95,7 +95,7 @@ export class UserService {
 
 	async profileImgUpdate(profile: string, user: JwtUserDto) {
 		await this.userRepository.user.update({
-			where: { email: BigInt(user.email) },
+			where: { email: user.email },
 			data: { profile },
 		});
 		await this.userRepository.userLib.update({
@@ -107,7 +107,7 @@ export class UserService {
 
 	async getMyPage(user: JwtUserDto) {
 		const exUser: any = await this.userRepository.user.findUnique({
-			where: { email: BigInt(user.email) },
+			where: { email: user.email },
 			include: {
 				library: true,
 				user_info: true,

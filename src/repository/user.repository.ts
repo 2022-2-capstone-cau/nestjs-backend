@@ -14,9 +14,9 @@ export class UserRepository extends PrismaClient implements OnModuleInit {
 		});
 	}
 
-	findUserByEmail(id: number) {
+	findUserByEmail(id: string) {
 		return this.user.findUnique({
-			where: { email: BigInt(id) },
+			where: { email: id },
 		});
 	}
 
