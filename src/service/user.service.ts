@@ -21,13 +21,13 @@ export class UserService {
 				.get("https://kapi.kakao.com/v2/user/me", {
 					headers: {
 						"Content-Type": "application/x-www-form-urlencoded;charset=utf-8",
-						Authorization: `Bearer ${accessTokenDto.accesstoken}`,
+						Authorization: `Bearer ${accessTokenDto.accesstoken.trim()}`,
 					},
 				})
 				.pipe(
 					map((res) => res.data),
 					catchError((e) => {
-						console.log(e);
+						console.log(e?.message);
 						throw new HttpException("유효하지 않은 kakao token 입니다.", HttpStatus.BAD_REQUEST);
 					}),
 				),
