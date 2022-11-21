@@ -14,9 +14,9 @@ export class UserRepository extends PrismaClient implements OnModuleInit {
 		});
 	}
 
-	findUserByEmail(email: string) {
+	findUserByEmail(id: number) {
 		return this.user.findUnique({
-			where: { email },
+			where: { email: BigInt(id) },
 		});
 	}
 
@@ -26,15 +26,15 @@ export class UserRepository extends PrismaClient implements OnModuleInit {
 		});
 	}
 
-	createUser(userDao: UserDao) {
-		return this.user.create({
-			data: {
-				email: userDao.email,
-				name: userDao.name,
-				profile: userDao.profile,
-			},
-		});
-	}
+	// createUser(userDao: any) {
+	// 	return this.user.create({
+	// 		data: {
+	// 			email: userDao.email,
+	// 			name: userDao.name,
+	// 			profile: userDao.profile,
+	// 		},
+	// 	});
+	// }
 
 	findUserByNickname(name: string) {
 		return this.user.findMany({

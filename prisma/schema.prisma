@@ -12,7 +12,7 @@ datasource db {
 
 model User {
   user_id Int     @id @default(autoincrement())
-  email   String  @unique @db.VarChar(50)
+  email   BigInt  @unique @db.BigInt
   profile String? @db.Text
   name    String? @db.VarChar(10)
 
@@ -146,4 +146,3 @@ model Search {
 
   @@map("SEARCH")
 }
-

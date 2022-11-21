@@ -15,7 +15,7 @@ export class UserService {
 		private readonly jwtService: JwtService,
 	) {}
 
-	async kakaoLogin(accessTokenDto: AccessTokenDto | CreateUserDto) {
+	async kakaoLogin(accessTokenDto: any) {
 		const data: IkakaoResponse = await firstValueFrom(
 			this.http
 				.get("https://kapi.kakao.com/v2/user/me", {
@@ -26,19 +26,20 @@ export class UserService {
 				})
 				.pipe(
 					map((res) => res.data),
-					catchError(() => {
+					catchError((e) => {
+						console.log(e);
 						throw new HttpException("유효하지 않은 kakao token 입니다.", HttpStatus.BAD_REQUEST);
 					}),
 				),
 		);
-
-		const exUser = await this.userRepository.findUserByEmail(data.kakao_account.email);
+		console.log(data);
+		const exUser = await this.userRepository.findUserByEmail(data.id);
 
 		// 없는 유저이면 회원가입 후 로그인
 		if (!exUser) {
 			const newUser = await this.userRepository.user.create({
 				data: {
-					email: data.kakao_account.email,
+					email: BigInt(data.id),
 				},
 			});
 			await this.userRepository.userLib.create({
@@ -73,7 +74,7 @@ export class UserService {
 		}
 
 		await this.userRepository.user.update({
-			where: { email: user.email },
+			where: { email: BigInt(user.email) },
 			data: { name: nicknameDto.nickname },
 		});
 
@@ -94,7 +95,7 @@ export class UserService {
 
 	async profileImgUpdate(profile: string, user: JwtUserDto) {
 		await this.userRepository.user.update({
-			where: { email: user.email },
+			where: { email: BigInt(user.email) },
 			data: { profile },
 		});
 		await this.userRepository.userLib.update({
@@ -106,7 +107,7 @@ export class UserService {
 
 	async getMyPage(user: JwtUserDto) {
 		const exUser: any = await this.userRepository.user.findUnique({
-			where: { email: user.email },
+			where: { email: BigInt(user.email) },
 			include: {
 				library: true,
 				user_info: true,

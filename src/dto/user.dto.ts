@@ -36,8 +36,5 @@ export class UserIdDto {
 export class JwtUserDto {
 	user_id: any;
 
-	@IsString()
-	@Length(1, 50)
-	@IsEmail()
-	email: string;
+	email: number;
 }
