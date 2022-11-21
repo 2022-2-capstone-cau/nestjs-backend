@@ -9,13 +9,10 @@ import { FileInterceptor } from "@nestjs/platform-express";
 export class UserController {
 	constructor(private readonly userService: UserService) {}
 
-	@UseInterceptors(FileInterceptor("profile"))
 	@Post("/auth/kakao")
-	kakaoLogin(@Body() accessTokenDto: AccessTokenDto, @UploadedFile() file: Express.Multer.File): Promise<IkakaoLogin> {
+	kakaoLogin(@Body() accessTokenDto: AccessTokenDto): Promise<IkakaoLogin> {
 		return this.userService.kakaoLogin({
 			accesstoken: accessTokenDto.accesstoken,
-			nickname: accessTokenDto?.nickname,
-			profile: file?.destination,
 		});
 	}
 

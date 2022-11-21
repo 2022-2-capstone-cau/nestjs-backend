@@ -13,7 +13,7 @@ async function bootstrap() {
 	});
 	app.use(morgan("combined"));
 
-	app.useGlobalPipes(new ValidationPipe());
+	// app.useGlobalPipes(new ValidationPipe());
 	app.useGlobalFilters(new GlobalExceptionFilter());
 	app.useGlobalInterceptors(new ErrorResponseInterceptor());
 	// app.useGlobalInterceptors(new SuccessResponse());
