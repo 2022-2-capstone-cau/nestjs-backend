@@ -16,6 +16,13 @@ export class UserController {
 	}
 
 	@Post("/auth/kakao")
+	appleLogin(@Body() accessTokenDto: AccessTokenDto): Promise<any> {
+		return this.userService.appleLogin({
+			accesstoken: accessTokenDto.accesstoken,
+		});
+	}
+
+	@Post("/auth/kakao")
 	kakaoLogin(@Body() accessTokenDto: AccessTokenDto): Promise<IkakaoLogin> {
 		return this.userService.kakaoLogin({
 			accesstoken: accessTokenDto.accesstoken,
