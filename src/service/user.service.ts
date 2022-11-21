@@ -35,6 +35,7 @@ export class UserService {
 	}
 
 	async kakaoLogin(accessTokenDto: any) {
+		console.log("Access Token :", accessTokenDto.accesstoken);
 		const data: IkakaoResponse = await firstValueFrom(
 			this.http
 				.get("https://kapi.kakao.com/v2/user/me", {
