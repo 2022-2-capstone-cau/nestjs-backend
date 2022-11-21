@@ -8,7 +8,6 @@ export class ErrorResponseInterceptor implements NestInterceptor {
 		return next.handle().pipe(
 			map((data) => ({ success: true, body: data })),
 			catchError((error) => {
-				console.log("interceptor error", error.message);
 				return of({
 					success: false,
 					error: {
