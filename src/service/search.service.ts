@@ -20,6 +20,10 @@ export class SearchService {
 			take: 5,
 			skip: 5 * (searchBooksDto.cursor ? Number(searchBooksDto.cursor) : 1 - 1),
 			select: {
+				book_id: true,
+				img: true,
+				name: true,
+				is_rent: true,
 				user: {
 					select: {
 						user: {
@@ -39,18 +43,21 @@ export class SearchService {
 				},
 			},
 		});
-
+		console.log(books);
 		return {
-			list: books.map((e) => ({
-				book_id: e?.book_id,
-				thumbnailUrl: e?.img,
-				title: e?.name,
-				isRent: e?.is_rent,
-				user: {
-					user_id: e?.user?.user?.user_id,
-					name: e?.user?.user?.name,
-				},
-			})),
+			list: books.map((e) => {
+				console.log(e);
+				return {
+					book_id: e?.book_id,
+					thumbnailUrl: e?.img,
+					title: e?.name,
+					isRent: e?.is_rent,
+					user: {
+						user_id: e?.user?.user?.user_id,
+						name: e?.user?.user?.name,
+					},
+				};
+			}),
 			nextCursor: Math.ceil(count / 5),
 		};
 	}
