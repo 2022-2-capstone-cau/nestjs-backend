@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, Post, Req, UseGuards } from "@nestjs/common";
 import { HomeService } from "../service/home.service";
 import { SearchService } from "../service/search.service";
 import { SearchBooksDto } from "../dto/search.dto";
@@ -10,7 +10,7 @@ export class SearchController {
 
 	@UseGuards(JwtAuthGuard)
 	@Post()
-	searchBooks(@Body() searchBooksDto: SearchBooksDto) {
-		return this.searchService.searchBooks(searchBooksDto);
+	searchBooks(@Body() searchBooksDto: SearchBooksDto, @Req() req) {
+		return this.searchService.searchBooks(searchBooksDto, req.user);
 	}
 }

@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Post, Put, Req, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
 import { UserService } from "../service/user.service";
-import { AccessTokenDto, NicknameDto } from "../dto/user.dto";
+import { AccessTokenDto, CodeDto, NicknameDto } from "../dto/user.dto";
 import { IkakaoLogin, INicknameCheck } from "../Type/response/user.type.response";
 import { JwtAuthGuard } from "../common/guards/jwt.guard";
 import { FileInterceptor } from "@nestjs/platform-express";
@@ -16,9 +16,9 @@ export class UserController {
 	}
 
 	@Post("/auth/apple")
-	appleLogin(@Body() accessTokenDto: AccessTokenDto): Promise<any> {
+	appleLogin(@Body() codeDto: CodeDto): Promise<any> {
 		return this.userService.appleLogin({
-			accesstoken: accessTokenDto.accesstoken,
+			authorized_code: codeDto.authorized_code,
 		});
 	}
 

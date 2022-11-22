@@ -12,7 +12,7 @@ datasource db {
 
 model User {
   user_id Int     @id @default(autoincrement())
-  email   String  @unique @db.VarChar(20)
+  email   String  @unique @db.VarChar(50)
   profile String? @db.Text
   name    String? @db.VarChar(10)
 
@@ -27,7 +27,7 @@ model User {
 }
 
 model Category {
-  category String @id @db.VarChar(10)
+  category String @id @db.VarChar(255)
 
   user_librarys UserLib[]
   category_book CategoryBook[]
@@ -37,7 +37,7 @@ model Category {
 
 model UserLib {
   user_id       Int     @id
-  best_category String? @db.VarChar(10)
+  best_category String? @db.VarChar(255)
   book_total    Int     @default(0) @db.Integer
   profile       String? @db.Text
 
@@ -73,10 +73,10 @@ model UserSetting {
 model Book {
   book_id   Int     @id @default(autoincrement())
   img       String? @db.Text
-  name      String  @db.VarChar(10)
-  publisher String  @db.VarChar(10)
-  ISPN      String  @db.VarChar(50)
-  author    String  @db.VarChar(20)
+  name      String  @db.VarChar(255)
+  publisher String  @db.VarChar(255)
+  ISPN      String  @db.VarChar(255)
+  author    String  @db.VarChar(255)
   user_id   Int?    @db.Integer
   is_rent   Boolean @default(false) @db.Boolean
 
@@ -88,7 +88,7 @@ model Book {
 }
 
 model CategoryBook {
-  category_name String @db.VarChar(10)
+  category_name String @db.VarChar(255)
   book_id       Int    @db.Integer
 
   category Category @relation(fields: [category_name], references: [category])

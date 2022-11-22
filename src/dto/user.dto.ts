@@ -1,5 +1,9 @@
 import { IsEmail, IsNumber, IsOptional, IsString, Length } from "class-validator";
 
+export class CodeDto {
+	authorized_code: string;
+}
+
 export class AccessTokenDto {
 	@IsString()
 	accesstoken: string;

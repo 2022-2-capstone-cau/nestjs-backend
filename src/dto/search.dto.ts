@@ -5,5 +5,5 @@ export class SearchBooksDto {
 	query: string;
 
 	@IsNumber()
-	cursor?: number;
+	cursor?: any;
 }

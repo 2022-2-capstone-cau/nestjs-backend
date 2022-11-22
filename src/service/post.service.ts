@@ -5,6 +5,7 @@ import { catchError, map } from "rxjs/operators";
 import { JwtUserDto } from "../dto/user.dto";
 import { PostRepository } from "../repository/post.repository";
 import { BookIdDto, CreateMsgDto } from "../dto/post.dto";
+import * as Http from "http";
 
 @Injectable()
 export class PostService {
@@ -26,6 +27,17 @@ export class PostService {
 					}),
 				),
 		);
+		if (data.total == 0) {
+			return {
+				thumbnailUrl: "",
+				title: "검색결과 없음",
+				desc: "검색결과 없음",
+				publisher: "",
+				writer: "",
+				pubYear: "",
+				tags: "",
+			};
+		}
 
 		return {
 			thumbnailUrl: "http://cover.nl.go.kr/" + data?.result[0]?.imageUrl,
@@ -63,15 +75,39 @@ export class PostService {
 			this.LookupISPN(registerBookDto.isbn),
 			this.postRepository.user.findUnique({
 				where: {
-					email: user.email,
+					user_id: Number(user.user_id),
 				},
 			}),
 		]);
 
-		const exCategory = await this.postRepository.category.findUnique({ where: { category: data.tags } });
+		if (data.title == "검색결과 없음") {
+			throw new HttpException("검색결과 없음. 해당 ISBN 책이 없습니다.", HttpStatus.NOT_FOUND);
+		}
 
-		if (exCategory) {
-			this.postRepository.category.create({ data: { category: data.tags } });
+		const exCategory = await this.postRepository.category.findUnique({ where: { category: data.tags } });
+		console.log(data);
+		if (!exCategory) {
+			const newCate = await this.postRepository.category.create({ data: { category: data.tags } });
+
+			const newBook = await this.postRepository.book.create({
+				data: {
+					img: data.thumbnailUrl,
+					name: data.title,
+					publisher: data.publisher,
+					ISPN: registerBookDto.isbn,
+					author: data.writer,
+					user_id: exUser.user_id,
+				},
+			});
+
+			await this.postRepository.categoryBook.create({
+				data: {
+					category_name: newCate.category,
+					book_id: newBook.book_id,
+				},
+			});
+
+			return { book_id: newBook.book_id };
 		}
 
 		const newBook = await this.postRepository.book.create({
@@ -82,6 +118,13 @@ export class PostService {
 				ISPN: registerBookDto.isbn,
 				author: data.writer,
 				user_id: exUser.user_id,
+			},
+		});
+
+		await this.postRepository.categoryBook.create({
+			data: {
+				category_name: exCategory.category,
+				book_id: newBook.book_id,
 			},
 		});
 

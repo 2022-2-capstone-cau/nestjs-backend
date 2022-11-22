@@ -1,11 +1,12 @@
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { HttpService } from "@nestjs/axios";
-import { AccessTokenDto, CreateUserDto, NicknameDto, JwtUserDto } from "../dto/user.dto";
+import { AccessTokenDto, CreateUserDto, NicknameDto, JwtUserDto, CodeDto } from "../dto/user.dto";
 import { catchError, map } from "rxjs/operators";
 import { UserRepository } from "../repository/user.repository";
 import { IkakaoResponse } from "../Type/common/user.type.common";
 import { firstValueFrom } from "rxjs";
 import { JwtService } from "@nestjs/jwt";
+import * as jwt from "jsonwebtoken";
 
 @Injectable()
 export class UserService {
@@ -15,15 +16,33 @@ export class UserService {
 		private readonly jwtService: JwtService,
 	) {}
 
-	async appleLogin(accessTokenDto: any) {
-		const data: IkakaoResponse = await firstValueFrom(
+	async appleLogin(codeDto: CodeDto) {
+		const cs = {
+			kid: `${"U4QURYJ42Q"}`,
+			alg: "ES256",
+			iss: `${"NVW9ZFUJM3"}`,
+			iat: Date.now(),
+			exp: Date.now() + 3600 * 24 * 31 * 2,
+			aud: "https://appleid.apple.com",
+			sub: "Services ID - Identifier 값",
+		};
+		const data: any = await firstValueFrom(
 			this.http
-				.get("https://kapi.kakao.com/v2/user/me", {
-					headers: {
-						"Content-Type": "application/x-www-form-urlencoded;charset=utf-8",
-						Authorization: `Bearer ${accessTokenDto.accesstoken.trim()}`,
+				.post(
+					"https://appleid.apple.com/auth/token",
+					{
+						client_id: "CLIENT_ID",
+						client_secret: "CLIENT_SECRET",
+						code: "CODE",
+						grant_type: "authorization_code",
+						redirect_uri: "http://",
 					},
-				})
+					{
+						headers: {
+							"Content-Type": "application/x-www-form-urlencoded;charset=utf-8",
+						},
+					},
+				)
 				.pipe(
 					map((res) => res.data),
 					catchError((e) => {
@@ -32,6 +51,8 @@ export class UserService {
 					}),
 				),
 		);
+
+		console.log("apple data", data);
 	}
 
 	async kakaoLogin(accessTokenDto: any) {
@@ -82,7 +103,7 @@ export class UserService {
 		// 있는 유저이면 로그인
 		return {
 			accesstoken: this.jwtService.sign({ email: exUser?.email, user_id: exUser.user_id }),
-			requiresProfile: true,
+			requiresProfile: !!exUser.name,
 		};
 	}
 

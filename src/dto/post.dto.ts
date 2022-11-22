@@ -5,7 +5,7 @@ export class RegisterBookDto {
 	isbn: string;
 
 	@IsString()
-	category: string;
+	category?: string;
 }
 
 export class BookIdDto {

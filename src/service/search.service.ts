@@ -1,12 +1,16 @@
 import { Injectable } from "@nestjs/common";
 import { SearchBooksDto } from "../dto/search.dto";
 import { SearchRepository } from "../repository/search.repository";
+import { JwtUserDto } from "../dto/user.dto";
 
 @Injectable()
 export class SearchService {
 	constructor(private readonly searchRepository: SearchRepository) {}
 
-	async searchBooks(searchBooksDto: SearchBooksDto) {
+	async searchBooks(searchBooksDto: SearchBooksDto, user: JwtUserDto) {
+		await this.searchRepository.search.create({
+			data: { user_id: Number(user.user_id), content: searchBooksDto.query },
+		});
 		const books: any = await this.searchRepository.book.findMany({
 			where: {
 				name: {
@@ -14,7 +18,7 @@ export class SearchService {
 				},
 			},
 			take: 5,
-			skip: 5 * (searchBooksDto.cursor - 1),
+			skip: 5 * (searchBooksDto.cursor ? Number(searchBooksDto.cursor) : 1 - 1),
 			select: {
 				user: {
 					select: {

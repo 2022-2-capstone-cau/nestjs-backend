@@ -7,7 +7,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
 		const ctx = host.switchToHttp();
 		const response = ctx.getResponse<Response>();
 		const status = exception.getStatus();
-
+		console.log(exception.message);
 		response.status(status).json({
 			success: false,
 			error: {
