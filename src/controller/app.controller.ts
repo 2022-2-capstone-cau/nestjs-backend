@@ -17,4 +17,10 @@ export class AppController {
 		console.log(req.user);
 		return req.user;
 	}
+
+	@UseGuards(JwtAuthGuard)
+	@Post()
+	updateAll(@Req() req): Promise<string> {
+		return this.appService.updateAll();
+	}
 }
