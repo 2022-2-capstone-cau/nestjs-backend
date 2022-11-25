@@ -133,7 +133,7 @@ model Rent {
   user UserLib @relation(fields: [user_id], references: [user_id])
   book Book    @relation(fields: [book_id], references: [book_id], onDelete: Cascade)
 
-  @@id([user_id, book_id])
+  @@id([user_id, book_id, date])
   @@map("RENT")
 }
 
