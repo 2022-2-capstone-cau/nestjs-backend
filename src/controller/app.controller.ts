@@ -19,7 +19,7 @@ export class AppController {
 	}
 
 	@UseGuards(JwtAuthGuard)
-	@Post()
+	@Post("/update")
 	updateAll(@Req() req): Promise<string> {
 		return this.appService.updateAll();
 	}
