@@ -155,6 +155,25 @@ export class UserService {
 			},
 		});
 
+		const exRent = await this.userRepository.rent.findMany({
+			where: {
+				user_id: Number(user.user_id),
+				book: {
+					is_rent: true,
+				},
+			},
+			select: {
+				book_id: true,
+				date: true,
+				book: true,
+			},
+		});
+
+		const myBooks = await this.userRepository.book.findMany({
+			where: { user_id: Number(user.user_id) },
+			orderBy: { book_id: "desc" },
+		});
+
 		return {
 			user: {
 				user_id: exUser.user_id,
@@ -168,8 +187,18 @@ export class UserService {
 				numberOfOwn: exUser.library.book_total,
 				numberOfRental: exUser.user_info.rental_total,
 			},
-			rents: [],
-			owns: [],
+			rents: exRent.map((e) => ({
+				book_id: e.book_id,
+				thumbnailUrl: e.book.img,
+				title: e.book.name,
+				rentedAt: e.date,
+			})),
+			owns: myBooks.map((e) => ({
+				book_id: e.book_id,
+				thumbnailUrl: e.img,
+				title: e.name,
+				isRent: e.is_rent,
+			})),
 		};
 	}
 

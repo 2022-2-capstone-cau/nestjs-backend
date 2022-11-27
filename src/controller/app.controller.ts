@@ -23,4 +23,9 @@ export class AppController {
 	updateAll(@Req() req): Promise<string> {
 		return this.appService.updateAll();
 	}
+
+	@Get("/test")
+	test(@Req() req) {
+		return this.appService.test();
+	}
 }

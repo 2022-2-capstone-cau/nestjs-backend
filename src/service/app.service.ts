@@ -17,12 +17,17 @@ export class AppService {
 			await this.prisma.rent.create({
 				data: {
 					user_id: (i % 3) + 1,
-					book_id: Math.round(Math.random() * 30),
+					book_id: Math.round(Math.random() * 49),
 					date: faker.date.past(),
 				},
 			});
+			i++;
 		}
 
 		return "success";
+	}
+
+	test() {
+		return faker.date.past();
 	}
 }
