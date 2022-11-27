@@ -42,3 +42,7 @@ export class JwtUserDto {
 
 	email: string;
 }
+
+export class TokenDto {
+	token: string;
+}

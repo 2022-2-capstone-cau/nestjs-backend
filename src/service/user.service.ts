@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { HttpService } from "@nestjs/axios";
-import { AccessTokenDto, CreateUserDto, NicknameDto, JwtUserDto, CodeDto } from "../dto/user.dto";
+import { AccessTokenDto, CreateUserDto, NicknameDto, JwtUserDto, CodeDto, TokenDto } from "../dto/user.dto";
 import { catchError, map } from "rxjs/operators";
 import { UserRepository } from "../repository/user.repository";
 import { IkakaoResponse } from "../Type/common/user.type.common";
@@ -171,5 +171,14 @@ export class UserService {
 			rents: [],
 			owns: [],
 		};
+	}
+
+	async addToken(tokenDto: TokenDto, user: JwtUserDto) {
+		await this.userRepository.userSetting.update({
+			where: { user_id: Number(user.user_id) },
+			data: { token: tokenDto.token },
+		});
+
+		return { update: true };
 	}
 }

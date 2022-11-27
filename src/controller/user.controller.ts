@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Post, Put, Req, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
 import { UserService } from "../service/user.service";
-import { AccessTokenDto, CodeDto, NicknameDto } from "../dto/user.dto";
+import { AccessTokenDto, CodeDto, NicknameDto, TokenDto } from "../dto/user.dto";
 import { IkakaoLogin, INicknameCheck } from "../Type/response/user.type.response";
 import { JwtAuthGuard } from "../common/guards/jwt.guard";
 import { FileInterceptor } from "@nestjs/platform-express";
@@ -52,5 +52,11 @@ export class UserController {
 	@Get("/me/mypage")
 	getMyPage(@Req() req) {
 		return this.userService.getMyPage(req.user);
+	}
+
+	@UseGuards(JwtAuthGuard)
+	@Post("/token")
+	addToken(@Body() tokenDto: TokenDto, @Req() req) {
+		return this.userService.addToken(tokenDto, req.user);
 	}
 }

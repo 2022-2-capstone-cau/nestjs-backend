@@ -63,7 +63,8 @@ model UserStatus {
 }
 
 model UserSetting {
-  user_id Int @id
+  user_id Int     @id
+  token   String? @db.Text
 
   user User @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
 
