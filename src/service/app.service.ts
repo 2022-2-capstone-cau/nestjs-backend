@@ -14,14 +14,17 @@ export class AppService {
 		let i = 0;
 
 		while (i < 100) {
-			await this.prisma.rent.create({
+			const newRent = await this.prisma.rent.create({
 				data: {
 					user_id: (i % 3) + 1,
 					book_id: Math.round(Math.random() * 49) > 1 ? Math.round(Math.random() * 49) : 1,
 					date: faker.date.past(),
 				},
 			});
-			i++;
+
+			if (!newRent) {
+				break;
+			}
 		}
 
 		return "success";
