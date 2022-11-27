@@ -25,6 +25,8 @@ export class AppService {
 			if (!newRent) {
 				break;
 			}
+
+			i = i + 1;
 		}
 
 		return "success";
