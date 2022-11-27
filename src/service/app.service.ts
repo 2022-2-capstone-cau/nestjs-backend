@@ -17,7 +17,7 @@ export class AppService {
 			await this.prisma.rent.create({
 				data: {
 					user_id: (i % 3) + 1,
-					book_id: Math.round(Math.random() * 49),
+					book_id: Math.round(Math.random() * 49) > 1 ? Math.round(Math.random() * 49) : 1,
 					date: faker.date.past(),
 				},
 			});
