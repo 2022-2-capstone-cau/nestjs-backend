@@ -37,7 +37,7 @@ export class HomeService {
 				},
 			},
 			orderBy: {
-				date: "asc",
+				rent_id: "asc",
 			},
 		});
 

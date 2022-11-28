@@ -11,23 +11,24 @@ export class AppService {
 	}
 
 	async updateAll() {
-		let i = 0;
-
-		while (i < 100) {
-			const newRent = await this.prisma.rent.create({
+		const arr = new Array(10).fill(
+			this.prisma.rent.create({
 				data: {
-					user_id: (i % 3) + 1,
-					book_id: Math.round(Math.random() * 49) > 1 ? Math.round(Math.random() * 49) : 1,
-					date: faker.date.past(),
+					user_id: Math.ceil(Math.random() * 2),
+					book_id: Math.ceil(Math.random() * 49),
+					date: new Date(),
 				},
-			});
+			}),
+		);
 
-			if (!newRent) {
-				break;
-			}
+		await Promise.all(arr);
 
-			i = i + 1;
-		}
+		// return this.prisma.rent.create({
+		// 	data: {
+		// 		user_id: 1,
+		// 		book_id: 1,
+		// 	},
+		// });
 
 		return "success";
 	}
