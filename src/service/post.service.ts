@@ -134,7 +134,7 @@ export class PostService {
 	async rentBook(bookIdDto: BookIdDto, user: JwtUserDto) {
 		// rent 처리
 		await this.postRepository.book.update({
-			where: { book_id: parseInt(bookIdDto.book_id) },
+			where: { book_id: Number(bookIdDto.book_id) },
 			data: { is_rent: true },
 		});
 

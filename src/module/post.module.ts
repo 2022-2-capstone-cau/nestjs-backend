@@ -7,5 +7,6 @@ import { HttpModule } from "@nestjs/axios";
 	imports: [HttpModule.register({})],
 	controllers: [PostController],
 	providers: [PostService],
+	exports: [PostService],
 })
 export class PostModule {}
