@@ -4,6 +4,12 @@ import { UserDao } from "../dao/user.dao";
 
 @Injectable()
 export class UserRepository extends PrismaClient implements OnModuleInit {
+	constructor() {
+		super({
+			log: [{ emit: "event", level: "query" }],
+		});
+	}
+
 	async onModuleInit() {
 		await this.$connect();
 	}

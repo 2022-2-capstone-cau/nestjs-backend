@@ -26,12 +26,12 @@ export class HomeService {
 		//  LIMIT 1
 		// `;
 		const userStatus = await this.homeRepository.userStatus.findUnique({
-			where: { user_id: parseInt(user.user_id) },
+			where: { user_id: Number(user.user_id) },
 		});
 
 		const date = await this.homeRepository.rent.findMany({
 			where: {
-				user_id: parseInt(user.user_id),
+				user_id: Number(user.user_id),
 				book: {
 					is_rent: true,
 				},
@@ -71,7 +71,7 @@ export class HomeService {
 
 		return {
 			rent: {
-				fastestRemainingReturnDay: date[0].date,
+				fastestRemainingReturnDay: new Date(date[0].date).setDate(new Date(date[0].date).getDate() + 7),
 				numberOfRental: userStatus?.rental_total,
 			},
 			recommend: {
