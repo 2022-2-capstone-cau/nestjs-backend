@@ -180,7 +180,7 @@ export class PostService {
 
 		const data = await this.postRepository.room.findMany({
 			where: {
-				user_id: exUser.user_id,
+				user_id: Number(exUser.user_id),
 			},
 			select: {
 				attn_id: true,

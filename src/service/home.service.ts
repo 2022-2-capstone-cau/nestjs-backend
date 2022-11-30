@@ -71,7 +71,7 @@ export class HomeService {
 
 		return {
 			rent: {
-				fastestRemainingReturnDay: new Date(date[0].date).setDate(new Date(date[0].date).getDate() + 7),
+				fastestRemainingReturnDay: new Date(new Date(date[0].date).setDate(new Date(date[0].date).getDate() + 7)),
 				numberOfRental: userStatus?.rental_total,
 			},
 			recommend: {
