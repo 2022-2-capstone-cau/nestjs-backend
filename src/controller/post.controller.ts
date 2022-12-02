@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, ParseIntPipe, Post, Query, Req, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, Param, ParseIntPipe, Post, Put, Query, Req, UseGuards } from "@nestjs/common";
 import { PostService } from "../service/post.service";
 import { JwtAuthGuard } from "../common/guards/jwt.guard";
 import { BookIdDto, CreateMsgDto, RegisterBookDto } from "../dto/post.dto";
@@ -27,6 +27,12 @@ export class PostController {
 
 	@UseGuards(JwtAuthGuard)
 	@Post("/rent")
+	rentBookCli(@Body() bookId: BookIdDto, @Req() req) {
+		return this.postService.rentBookCli(bookId, req.user);
+	}
+
+	@UseGuards(JwtAuthGuard)
+	@Put("/rent")
 	rentBook(@Body() bookId: BookIdDto, @Req() req) {
 		return this.postService.rentBook(bookId, req.user);
 	}

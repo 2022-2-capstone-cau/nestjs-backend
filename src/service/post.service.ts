@@ -5,7 +5,6 @@ import { catchError, map } from "rxjs/operators";
 import { JwtUserDto } from "../dto/user.dto";
 import { PostRepository } from "../repository/post.repository";
 import { BookIdDto, CreateMsgDto } from "../dto/post.dto";
-import * as Http from "http";
 
 @Injectable()
 export class PostService {
@@ -131,6 +130,18 @@ export class PostService {
 		return { book_id: newBook.book_id };
 	}
 
+	async rentBookCli(bookIdDto: BookIdDto, user: JwtUserDto) {
+		await this.postRepository.room.create({
+			data: {
+				user_id: Number(bookIdDto.attn_id),
+				attn_id: Number(user.user_id),
+				book_id: Number(bookIdDto.book_id),
+				last_message: "내용 없음",
+			},
+		});
+		return;
+	}
+
 	async rentBook(bookIdDto: BookIdDto, user: JwtUserDto) {
 		if (!bookIdDto.allow) {
 			return {
@@ -170,9 +181,8 @@ export class PostService {
 		});
 
 		// 현재 상태 갱신
-		const { user_id } = await this.postRepository.user.findUnique({ where: { email: user.email } });
 		await this.postRepository.userStatus.update({
-			where: { user_id },
+			where: { user_id: Number(user.user_id) },
 			data: { rental_total: { decrement: 1 } },
 		});
 
@@ -224,14 +234,16 @@ export class PostService {
 				user_id: Number(user.user_id),
 				attn_id: Number(createMsgDto.attn_id),
 				message: createMsgDto.message,
+				book_id: Number(createMsgDto.book_id),
 			},
 		});
 
 		this.postRepository.room.update({
 			where: {
-				user_id_attn_id: {
+				user_id_attn_id_book_id: {
 					user_id: Number(user.user_id),
 					attn_id: Number(createMsgDto.attn_id),
+					book_id: Number(createMsgDto.book_id),
 				},
 			},
 			data: {

@@ -20,4 +20,7 @@ export class CreateMsgDto {
 
 	@IsString()
 	attn_id: any;
+
+	@IsString()
+	book_id: any;
 }

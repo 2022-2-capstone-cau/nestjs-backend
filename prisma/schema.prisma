@@ -85,6 +85,7 @@ model Book {
   user       UserLib?       @relation(fields: [user_id], references: [user_id], onDelete: SetNull)
   categories CategoryBook[]
   rents      Rent[]
+  rooms      Room[]         @relation("rbook")
 
   @@map("BOOK")
 }
@@ -103,27 +104,30 @@ model CategoryBook {
 model Room {
   user_id      Int      @db.Integer
   attn_id      Int      @db.Integer
+  book_id      Int      @db.Integer
   last_message String   @db.VarChar(255)
   last_date    DateTime @default(now()) @db.Timestamp(0)
 
   user UserLib @relation("users", fields: [user_id], references: [user_id])
   attn UserLib @relation("attns", fields: [attn_id], references: [user_id])
+  book Book    @relation("rbook", fields: [book_id], references: [book_id])
 
   chats Chat[] @relation("room")
 
-  @@id([user_id, attn_id])
+  @@id([user_id, attn_id, book_id])
   @@map("ROOM")
 }
 
 model Chat {
+  chat_id Int      @id @default(autoincrement())
   user_id Int      @db.Integer
   attn_id Int      @db.Integer
+  book_id Int      @db.Integer
   date    DateTime @default(now()) @db.Timestamp(0)
   message String   @db.Text
 
-  room Room @relation("room", fields: [user_id, attn_id], references: [user_id, attn_id])
+  room Room @relation("room", fields: [user_id, attn_id, book_id], references: [user_id, attn_id, book_id])
 
-  @@id([user_id, attn_id, date])
   @@map("CHAT")
 }
 
