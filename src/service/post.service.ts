@@ -132,6 +132,11 @@ export class PostService {
 	}
 
 	async rentBook(bookIdDto: BookIdDto, user: JwtUserDto) {
+		if (!bookIdDto.allow) {
+			return {
+				rent: false,
+			};
+		}
 		// rent 처리
 		await this.postRepository.book.update({
 			where: { book_id: Number(bookIdDto.book_id) },
@@ -139,21 +144,22 @@ export class PostService {
 		});
 
 		// 현재 상태 갱신
-		const { user_id } = await this.postRepository.user.findUnique({ where: { email: user.email } });
 		await this.postRepository.userStatus.update({
-			where: { user_id },
+			where: { user_id: Number(user.user_id) },
 			data: { rental_total: { increment: 1 } },
 		});
 
 		// rent 정보 생성
 		await this.postRepository.rent.create({
 			data: {
-				user_id: user_id,
-				book_id: parseInt(bookIdDto.book_id),
+				user_id: Number(bookIdDto.attn_id),
+				book_id: Number(bookIdDto.book_id),
 			},
 		});
 
-		return;
+		return {
+			rent: true,
+		};
 	}
 
 	async returnBook(bookIdDto: BookIdDto, user: JwtUserDto) {
@@ -203,8 +209,8 @@ export class PostService {
 	async getChats(attn_id: number, user: JwtUserDto) {
 		return this.postRepository.chat.findMany({
 			where: {
-				user_id: parseInt(user.user_id),
-				attn_id: attn_id,
+				user_id: Number(user.user_id),
+				attn_id: Number(attn_id),
 			},
 			orderBy: {
 				date: "desc",
@@ -215,8 +221,8 @@ export class PostService {
 	async createChats(createMsgDto: CreateMsgDto, user: JwtUserDto) {
 		const newMsg = await this.postRepository.chat.create({
 			data: {
-				user_id: parseInt(user.user_id),
-				attn_id: parseInt(createMsgDto.attn_id),
+				user_id: Number(user.user_id),
+				attn_id: Number(createMsgDto.attn_id),
 				message: createMsgDto.message,
 			},
 		});
@@ -224,8 +230,8 @@ export class PostService {
 		this.postRepository.room.update({
 			where: {
 				user_id_attn_id: {
-					user_id: parseInt(user.user_id),
-					attn_id: parseInt(createMsgDto.attn_id),
+					user_id: Number(user.user_id),
+					attn_id: Number(createMsgDto.attn_id),
 				},
 			},
 			data: {

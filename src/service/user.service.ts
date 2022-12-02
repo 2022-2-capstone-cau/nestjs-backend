@@ -203,7 +203,7 @@ export class UserService {
 	}
 
 	async addToken(tokenDto: TokenDto, user: JwtUserDto) {
-		await this.userRepository.userSetting.update({
+		await this.userRepository.user.update({
 			where: { user_id: Number(user.user_id) },
 			data: { token: tokenDto.token },
 		});

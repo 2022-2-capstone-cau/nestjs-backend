@@ -4,6 +4,8 @@ import { GlobalExceptionFilter } from "./common/exceptions/Global.exception.filt
 import { ErrorResponseInterceptor } from "./common/interceptors/ErrorResponse.interceptor";
 import { ValidationPipe } from "@nestjs/common";
 import * as morgan from "morgan";
+import * as admin from "firebase-admin";
+import { ServiceAccount } from "firebase-admin";
 
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule);
@@ -17,6 +19,17 @@ async function bootstrap() {
 	app.useGlobalFilters(new GlobalExceptionFilter());
 	app.useGlobalInterceptors(new ErrorResponseInterceptor());
 	// app.useGlobalInterceptors(new SuccessResponse());
+
+	const adminConfig: ServiceAccount = {
+		projectId: `${""}`,
+		privateKey: `${"".replace(/\\n/g, "\n")}`,
+		clientEmail: `${""}`,
+	};
+
+	await admin.initializeApp({
+		credential: admin.credential.cert(adminConfig),
+		databaseURL: process.env.FIREBASE_DATABASE,
+	});
 
 	await app.listen(3000);
 }

@@ -9,7 +9,9 @@ export class RegisterBookDto {
 }
 
 export class BookIdDto {
+	attn_id?: string;
 	book_id: string;
+	allow?: boolean;
 }
 
 export class CreateMsgDto {

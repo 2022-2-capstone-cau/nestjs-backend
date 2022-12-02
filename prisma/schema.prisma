@@ -15,6 +15,7 @@ model User {
   email   String  @unique @db.VarChar(50)
   profile String? @db.Text
   name    String? @db.VarChar(10)
+  token   String? @db.Text
 
   library      UserLib?
   user_info    UserStatus?
