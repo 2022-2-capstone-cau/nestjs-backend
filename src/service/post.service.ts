@@ -206,12 +206,14 @@ export class PostService {
 						user: true,
 					},
 				},
+				book: true,
 			},
 		});
 
 		return data.map((e) => ({
 			attn_id: e.attn_id,
-			last_message: e.last_message,
+			bookName: e.book.name,
+			bookURL: e.book.img,
 			name: e.attn.user.name,
 		}));
 	}
