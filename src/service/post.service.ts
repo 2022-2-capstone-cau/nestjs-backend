@@ -5,6 +5,7 @@ import { catchError, map } from "rxjs/operators";
 import { JwtUserDto } from "../dto/user.dto";
 import { PostRepository } from "../repository/post.repository";
 import { BookIdDto, CreateMsgDto } from "../dto/post.dto";
+import * as admin from "firebase-admin";
 
 @Injectable()
 export class PostService {
@@ -106,6 +107,26 @@ export class PostService {
 				},
 			});
 
+			const message = {
+				notification: {
+					title: "Home Brary",
+					body: `${newBook.name} 책이 등록되었어요! 확인 해보세요!`,
+				},
+				topic: "all",
+			};
+
+			admin
+				.messaging()
+				.send(message)
+				.then((res) => {
+					console.log(res);
+					return res;
+				})
+				.catch((error) => {
+					console.log(error);
+					throw new HttpException("send push all fcm error", HttpStatus.INTERNAL_SERVER_ERROR);
+				});
+
 			return { book_id: newBook.book_id };
 		}
 
@@ -127,6 +148,26 @@ export class PostService {
 			},
 		});
 
+		const message = {
+			notification: {
+				title: "Home Brary",
+				body: `${newBook.name} 책이 등록되었어요! 확인 해보세요!`,
+			},
+			topic: "all",
+		};
+
+		admin
+			.messaging()
+			.send(message)
+			.then((res) => {
+				console.log(res);
+				return res;
+			})
+			.catch((error) => {
+				console.log(error);
+				throw new HttpException("send push all fcm error", HttpStatus.INTERNAL_SERVER_ERROR);
+			});
+
 		return { book_id: newBook.book_id };
 	}
 
@@ -139,6 +180,7 @@ export class PostService {
 				last_message: "내용 없음",
 			},
 		});
+
 		return;
 	}
 
@@ -222,7 +264,6 @@ export class PostService {
 		return this.postRepository.chat.findMany({
 			where: {
 				user_id: Number(user.user_id),
-				attn_id: Number(attn_id),
 			},
 			orderBy: {
 				date: "desc",
