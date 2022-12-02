@@ -20,16 +20,16 @@ async function bootstrap() {
 	app.useGlobalInterceptors(new ErrorResponseInterceptor());
 	// app.useGlobalInterceptors(new SuccessResponse());
 
-	const adminConfig: ServiceAccount = {
-		projectId: `${""}`,
-		privateKey: `${"".replace(/\\n/g, "\n")}`,
-		clientEmail: `${""}`,
-	};
-
-	await admin.initializeApp({
-		credential: admin.credential.cert(adminConfig),
-		databaseURL: process.env.FIREBASE_DATABASE,
-	});
+	// const adminConfig: ServiceAccount = {
+	// 	projectId: `${""}`,
+	// 	privateKey: `${"".replace(/\\n/g, "\n")}`,
+	// 	clientEmail: `${""}`,
+	// };
+	//
+	// await admin.initializeApp({
+	// 	credential: admin.credential.cert(adminConfig),
+	// 	databaseURL: process.env.FIREBASE_DATABASE,
+	// });
 
 	await app.listen(3000);
 }
