@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Req, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, Post, Req, UseGuards } from "@nestjs/common";
 import { AppService } from "../service/app.service";
 import { JwtAuthGuard } from "../common/guards/jwt.guard";
 
@@ -24,7 +24,12 @@ export class AppController {
 	}
 
 	@Get("/test")
-	test(@Req() req) {
+	test() {
 		return this.appService.test();
+	}
+
+	@Post("/query")
+	query(@Body("query") query: string) {
+		return this.appService.query(query);
 	}
 }
