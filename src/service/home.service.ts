@@ -41,23 +41,23 @@ export class HomeService {
 			},
 		});
 
-		const cate: any = await this.homeRepository.$queryRaw`
-		 SELECT *
-		 FROM (
-		 	SELECT c.category_name, COUNT(*)
-		 	FROM "RENT" AS r
-		 	JOIN "BOOK" AS b USING(book_id)
-		 	JOIN "CATEGORY_BOOK" AS c USING(book_id)
-		 	WHERE r.user_id = ${Number(user.user_id)}
-		 	GROUP BY c.category_name
-		 ) AS t
-		 ORDER BY t.count DESC
-		 LIMIT 1
-		`;
+		// const cate: any = await this.homeRepository.$queryRaw`
+		//  SELECT *
+		//  FROM (
+		//  	SELECT c.category_name, COUNT(*)
+		//  	FROM "RENT" AS r
+		//  	JOIN "BOOK" AS b USING(book_id)
+		//  	JOIN "CATEGORY_BOOK" AS c USING(book_id)
+		//  	WHERE r.user_id = ${Number(user.user_id)}
+		//  	GROUP BY c.category_name
+		//  ) AS t
+		//  ORDER BY t.count DESC
+		//  LIMIT 1
+		// `;
 
 		const recom: any = await this.homeRepository.categoryBook.findMany({
 			where: {
-				category_name: cate?.category_name,
+				category_name: "IT",
 			},
 			include: {
 				book: true,
@@ -75,7 +75,7 @@ export class HomeService {
 				numberOfRental: userStatus?.rental_total,
 			},
 			recommend: {
-				category: cate,
+				category: "IT",
 				list: recom.map((e) => ({
 					book_id: e.book.book_id,
 					title: e.book.name,

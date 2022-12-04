@@ -12,7 +12,9 @@ export class AppService {
 	}
 
 	async updateAll() {
-		const books = await this.prisma.book.findMany();
+		const books = await this.prisma.book.findMany({
+			include: { categories: true },
+		});
 
 		return {
 			books,
@@ -24,14 +26,8 @@ export class AppService {
 	}
 
 	async query(query) {
-		console.log(`
-		SELECT ${query.where}
-		FROM "${query.from}"
-		`);
+		const rq = `${query.front}FROM "${query.from}" AS m${query.back}`;
 
-		return this.prisma.$queryRaw`
-		SELECT ${query.where}
-		FROM "${query.from}"
-		`;
+		return this.prisma.$queryRaw`${rq}`;
 	}
 }
