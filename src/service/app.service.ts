@@ -22,24 +22,27 @@ export class AppService {
 		}
 		const category = await this.prisma.category.findMany({});
 		const query = await this.prisma.$queryRaw`
-			SELECT *
+			SELECT *, COUNT(*) AS count
 			FROM "CATEGORY" AS c
 			GROUP BY c.category
 		`;
-		await this.prisma.userLib.upsert({
-			where: { user_id: 1 },
-			update: { best_category: "IT" },
-			create: { best_category: "IT", user_id: 1 },
-		});
-		await this.prisma.userLib.upsert({
-			where: { user_id: 2 },
-			update: { best_category: "IT" },
-			create: { best_category: "IT", user_id: 2 },
-		});
-		await this.prisma.userLib.upsert({
-			where: { user_id: 3 },
-			update: { best_category: "IT" },
-			create: { best_category: "IT", user_id: 3 },
+		// await this.prisma.userLib.upsert({
+		// 	where: { user_id: 1 },
+		// 	update: { best_category: "IT" },
+		// 	create: { best_category: "IT", user_id: 1 },
+		// });
+		// await this.prisma.userLib.upsert({
+		// 	where: { user_id: 2 },
+		// 	update: { best_category: "IT" },
+		// 	create: { best_category: "IT", user_id: 2 },
+		// });
+		// await this.prisma.userLib.upsert({
+		// 	where: { user_id: 3 },
+		// 	update: { best_category: "IT" },
+		// 	create: { best_category: "IT", user_id: 3 },
+		// });
+		await this.prisma.rent.updateMany({
+			data: { date: new Date() },
 		});
 
 		return {
