@@ -12,9 +12,11 @@ export class AppService {
 	}
 
 	async updateAll() {
-		return await this.prisma.rent.updateMany({
-			data: { date: new Date() },
-		});
+		const books = await this.prisma.book.findMany();
+
+		return {
+			books,
+		};
 	}
 
 	test() {
@@ -22,6 +24,11 @@ export class AppService {
 	}
 
 	async query(query) {
+		console.log(`
+		SELECT ${query.where}
+		FROM "${query.from}"
+		`);
+
 		return this.prisma.$queryRaw`
 		SELECT ${query.where}
 		FROM "${query.from}"
