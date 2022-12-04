@@ -22,6 +22,9 @@ export class AppService {
 	}
 
 	async query(query) {
-		return this.prisma.$queryRaw`${query}`;
+		return this.prisma.$queryRaw`
+		SELECT ${query.where}
+		FROM "${query.from}"
+		`;
 	}
 }
