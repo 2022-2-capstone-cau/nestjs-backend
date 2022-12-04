@@ -23,7 +23,7 @@ export class AppService {
 		const category = await this.prisma.category.findMany({});
 		const query = await this.prisma.$queryRaw`
 			SELECT *
-			FROM "category" AS c
+			FROM "CATEGORY" AS c
 			GROUP BY c.category
 		`;
 		await this.prisma.userLib.upsert({
