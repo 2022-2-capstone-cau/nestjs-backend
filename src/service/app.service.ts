@@ -12,12 +12,36 @@ export class AppService {
 	}
 
 	async updateAll() {
-		const books = await this.prisma.book.findMany({
-			include: { categories: true },
+		const r1 = [];
+		const r2 = [];
+		for (let i = 6; i < 40; i++) {
+			if (i % 2 === 0) r1.push(i);
+			if (i % 2 === 1) r2.push(i);
+		}
+		const result1 = await this.prisma.book.updateMany({
+			where: {
+				book_id: {
+					in: r1,
+				},
+			},
+			data: {
+				user_id: 2,
+			},
+		});
+		const result2 = await this.prisma.book.updateMany({
+			where: {
+				book_id: {
+					in: r2,
+				},
+			},
+			data: {
+				user_id: 3,
+			},
 		});
 
 		return {
-			books,
+			result1,
+			result2,
 		};
 	}
 
