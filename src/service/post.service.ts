@@ -281,7 +281,7 @@ export class PostService {
 			},
 		});
 
-		this.postRepository.room.update({
+		await this.postRepository.room.upsert({
 			where: {
 				user_id_attn_id_book_id: {
 					user_id: Number(user.user_id),
@@ -289,7 +289,14 @@ export class PostService {
 					book_id: Number(createMsgDto.book_id),
 				},
 			},
-			data: {
+			update: {
+				last_message: newMsg.message,
+				last_date: newMsg.date,
+			},
+			create: {
+				user_id: Number(user.user_id),
+				attn_id: Number(createMsgDto.attn_id),
+				book_id: Number(createMsgDto.book_id),
 				last_message: newMsg.message,
 				last_date: newMsg.date,
 			},
