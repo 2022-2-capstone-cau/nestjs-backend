@@ -232,13 +232,9 @@ export class PostService {
 	}
 
 	async getRooms(user: JwtUserDto) {
-		const exUser = await this.postRepository.user.findUnique({
-			where: { email: user.email },
-		});
-
 		const data = await this.postRepository.room.findMany({
 			where: {
-				user_id: Number(exUser.user_id),
+				user_id: Number(user.user_id),
 			},
 			select: {
 				attn_id: true,
@@ -280,6 +276,14 @@ export class PostService {
 				book_id: Number(createMsgDto.book_id),
 			},
 		});
+		await this.postRepository.chat.create({
+			data: {
+				user_id: Number(createMsgDto.attn_id),
+				attn_id: Number(user.user_id),
+				message: createMsgDto.message,
+				book_id: Number(createMsgDto.book_id),
+			},
+		});
 
 		await this.postRepository.room.upsert({
 			where: {
@@ -296,6 +300,27 @@ export class PostService {
 			create: {
 				user_id: Number(user.user_id),
 				attn_id: Number(createMsgDto.attn_id),
+				book_id: Number(createMsgDto.book_id),
+				last_message: newMsg.message,
+				last_date: newMsg.date,
+			},
+		});
+
+		await this.postRepository.room.upsert({
+			where: {
+				user_id_attn_id_book_id: {
+					user_id: Number(createMsgDto.attn_id),
+					attn_id: Number(user.user_id),
+					book_id: Number(createMsgDto.book_id),
+				},
+			},
+			update: {
+				last_message: newMsg.message,
+				last_date: newMsg.date,
+			},
+			create: {
+				user_id: Number(createMsgDto.attn_id),
+				attn_id: Number(user.user_id),
 				book_id: Number(createMsgDto.book_id),
 				last_message: newMsg.message,
 				last_date: newMsg.date,
