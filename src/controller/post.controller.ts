@@ -13,12 +13,6 @@ export class PostController {
 		return this.postService.LookupISPN(isbn);
 	}
 
-	@UseGuards()
-	@Get("/:bookId")
-	getPostDetail(@Param("bookId", ParseIntPipe) book_id: number) {
-		return this.postService.getPostDetail(book_id);
-	}
-
 	@UseGuards(JwtAuthGuard)
 	@Post("/book")
 	registerNewBook(@Req() req, @Body() registerBookDto: RegisterBookDto) {
@@ -51,13 +45,21 @@ export class PostController {
 
 	@UseGuards(JwtAuthGuard)
 	@Get("/chat")
-	getChats(@Query("attn_id", ParseIntPipe) attn_id, @Req() req) {
-		return this.postService.getChats(attn_id, req.user);
+	getChats(@Query("attn_id", ParseIntPipe) attn_id, @Query("book_id", ParseIntPipe) book_id, @Req() req) {
+		console.log(typeof attn_id);
+		return this.postService.getChats(attn_id, book_id, req.user);
 	}
 
 	@UseGuards(JwtAuthGuard)
 	@Post("/chat")
 	createChats(@Body() createMsgDto: CreateMsgDto, @Req() req) {
 		return this.postService.createChats(createMsgDto, req.user);
+	}
+
+	@UseGuards()
+	@Get("/detail/:bookId")
+	getPostDetail(@Param("bookId") book_id: number) {
+		console.log("hi");
+		return this.postService.getPostDetail(Number(book_id));
 	}
 }

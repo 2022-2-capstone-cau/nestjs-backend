@@ -256,18 +256,77 @@ export class PostService {
 		}));
 	}
 
-	async getChats(attn_id: number, user: JwtUserDto) {
-		return this.postRepository.chat.findMany({
+	async getChats(attn_id, book_id, user: JwtUserDto) {
+		const myChat = await this.postRepository.chat.findMany({
 			where: {
 				user_id: Number(user.user_id),
-			},
-			orderBy: {
-				date: "desc",
+				attn_id: attn_id,
+				book_id: book_id,
 			},
 		});
+
+		const attnChat = await this.postRepository.chat.findMany({
+			where: {
+				user_id: attn_id,
+				attn_id: Number(user.user_id),
+				book_id: book_id,
+			},
+		});
+
+		const result = [...myChat, ...attnChat];
+
+		result.sort((a, b) => {
+			if (a.date > b.date) return 1;
+			else if (a.date < b.date) return -1;
+			else return 0;
+		});
+
+		return result;
 	}
 
 	async createChats(createMsgDto: CreateMsgDto, user: JwtUserDto) {
+		await this.postRepository.room.upsert({
+			where: {
+				user_id_attn_id_book_id: {
+					user_id: Number(user.user_id),
+					attn_id: Number(createMsgDto.attn_id),
+					book_id: Number(createMsgDto.book_id),
+				},
+			},
+			update: {
+				last_message: createMsgDto.message,
+				last_date: new Date(),
+			},
+			create: {
+				user_id: Number(user.user_id),
+				attn_id: Number(createMsgDto.attn_id),
+				book_id: Number(createMsgDto.book_id),
+				last_message: createMsgDto.message,
+				last_date: new Date(),
+			},
+		});
+
+		await this.postRepository.room.upsert({
+			where: {
+				user_id_attn_id_book_id: {
+					user_id: Number(createMsgDto.attn_id),
+					attn_id: Number(user.user_id),
+					book_id: Number(createMsgDto.book_id),
+				},
+			},
+			update: {
+				last_message: createMsgDto.message,
+				last_date: new Date(),
+			},
+			create: {
+				user_id: Number(createMsgDto.attn_id),
+				attn_id: Number(user.user_id),
+				book_id: Number(createMsgDto.book_id),
+				last_message: createMsgDto.message,
+				last_date: new Date(),
+			},
+		});
+
 		const newMsg = await this.postRepository.chat.create({
 			data: {
 				user_id: Number(user.user_id),
@@ -285,48 +344,11 @@ export class PostService {
 			},
 		});
 
-		await this.postRepository.room.upsert({
-			where: {
-				user_id_attn_id_book_id: {
-					user_id: Number(user.user_id),
-					attn_id: Number(createMsgDto.attn_id),
-					book_id: Number(createMsgDto.book_id),
-				},
-			},
-			update: {
-				last_message: newMsg.message,
-				last_date: newMsg.date,
-			},
-			create: {
-				user_id: Number(user.user_id),
-				attn_id: Number(createMsgDto.attn_id),
-				book_id: Number(createMsgDto.book_id),
-				last_message: newMsg.message,
-				last_date: newMsg.date,
-			},
-		});
-
-		await this.postRepository.room.upsert({
-			where: {
-				user_id_attn_id_book_id: {
-					user_id: Number(createMsgDto.attn_id),
-					attn_id: Number(user.user_id),
-					book_id: Number(createMsgDto.book_id),
-				},
-			},
-			update: {
-				last_message: newMsg.message,
-				last_date: newMsg.date,
-			},
-			create: {
-				user_id: Number(createMsgDto.attn_id),
-				attn_id: Number(user.user_id),
-				book_id: Number(createMsgDto.book_id),
-				last_message: newMsg.message,
-				last_date: newMsg.date,
-			},
-		});
-
-		return newMsg;
+		return {
+			user_id: newMsg.user_id,
+			attn_id: newMsg.attn_id,
+			date: newMsg.date,
+			message: newMsg.message,
+		};
 	}
 }
