@@ -85,7 +85,13 @@ export class PostService {
 		}
 
 		const exCategory = await this.postRepository.category.findUnique({ where: { category: data.tags } });
-		console.log(data);
+		const fcmTokens = await this.postRepository.user.findMany({
+			select: {
+				token: true,
+			},
+		});
+
+		// console.log(data);
 		if (!exCategory) {
 			const newCate = await this.postRepository.category.create({ data: { category: data.tags } });
 
@@ -148,7 +154,7 @@ export class PostService {
 			},
 		});
 
-		const message = {
+		const messageAll = {
 			notification: {
 				title: "Home Brary",
 				body: `${newBook.name} 책이 등록되었어요! 확인 해보세요!`,
@@ -156,12 +162,74 @@ export class PostService {
 			topic: "all",
 		};
 
+		const messageTo1 = {
+			notification: {
+				title: "Home Brary",
+				body: `${newBook.name} 책이 등록되었어요! 확인 해보세요!`,
+			},
+			token: fcmTokens.map((e) => e.token)[0],
+		};
+
+		const messageTo2 = {
+			notification: {
+				title: "Home Brary",
+				body: `${newBook.name} 책이 등록되었어요! 확인 해보세요!`,
+			},
+			token: fcmTokens.map((e) => e.token)[0],
+		};
+
+		const messageTo3 = {
+			notification: {
+				title: "Home Brary",
+				body: `${newBook.name} 책이 등록되었어요! 확인 해보세요!`,
+			},
+			token: fcmTokens.map((e) => e.token)[0],
+		};
+
+		if (messageTo1?.token) {
+			admin
+				.messaging()
+				.send(messageTo1)
+				.then((res) => {
+					console.log(res);
+				})
+				.catch((error) => {
+					console.log(error);
+					throw new HttpException("send push all fcm error", HttpStatus.INTERNAL_SERVER_ERROR);
+				});
+		}
+
+		if (messageTo2?.token) {
+			admin
+				.messaging()
+				.send(messageTo2)
+				.then((res) => {
+					console.log(res);
+				})
+				.catch((error) => {
+					console.log(error);
+					throw new HttpException("send push all fcm error", HttpStatus.INTERNAL_SERVER_ERROR);
+				});
+		}
+
+		if (messageTo3?.token) {
+			admin
+				.messaging()
+				.send(messageTo3)
+				.then((res) => {
+					console.log(res);
+				})
+				.catch((error) => {
+					console.log(error);
+					throw new HttpException("send push all fcm error", HttpStatus.INTERNAL_SERVER_ERROR);
+				});
+		}
+
 		admin
 			.messaging()
-			.send(message)
+			.send(messageAll)
 			.then((res) => {
 				console.log(res);
-				return res;
 			})
 			.catch((error) => {
 				console.log(error);

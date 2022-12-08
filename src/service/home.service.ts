@@ -57,7 +57,7 @@ export class HomeService {
 
 		const recom: any = await this.homeRepository.categoryBook.findMany({
 			where: {
-				category_name: "IT",
+				category_name: "총류",
 			},
 			include: {
 				book: true,
