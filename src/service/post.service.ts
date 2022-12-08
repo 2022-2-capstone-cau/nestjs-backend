@@ -162,68 +162,68 @@ export class PostService {
 			topic: "all",
 		};
 
-		const messageTo1 = {
-			notification: {
-				title: "Home Brary",
-				body: `${newBook.name} 책이 등록되었어요! 확인 해보세요!`,
-			},
-			token: fcmTokens.map((e) => e.token)[0],
-		};
+		// const messageTo1 = {
+		// 	notification: {
+		// 		title: "Home Brary",
+		// 		body: `${newBook.name} 책이 등록되었어요! 확인 해보세요!`,
+		// 	},
+		// 	token: fcmTokens.map((e) => e.token)[0],
+		// };
+		//
+		// const messageTo2 = {
+		// 	notification: {
+		// 		title: "Home Brary",
+		// 		body: `${newBook.name} 책이 등록되었어요! 확인 해보세요!`,
+		// 	},
+		// 	token: fcmTokens.map((e) => e.token)[0],
+		// };
+		//
+		// const messageTo3 = {
+		// 	notification: {
+		// 		title: "Home Brary",
+		// 		body: `${newBook.name} 책이 등록되었어요! 확인 해보세요!`,
+		// 	},
+		// 	token: fcmTokens.map((e) => e.token)[0],
+		// };
 
-		const messageTo2 = {
-			notification: {
-				title: "Home Brary",
-				body: `${newBook.name} 책이 등록되었어요! 확인 해보세요!`,
-			},
-			token: fcmTokens.map((e) => e.token)[0],
-		};
-
-		const messageTo3 = {
-			notification: {
-				title: "Home Brary",
-				body: `${newBook.name} 책이 등록되었어요! 확인 해보세요!`,
-			},
-			token: fcmTokens.map((e) => e.token)[0],
-		};
-
-		if (messageTo1?.token) {
-			admin
-				.messaging()
-				.send(messageTo1)
-				.then((res) => {
-					console.log(res);
-				})
-				.catch((error) => {
-					console.log(error);
-					throw new HttpException("send push all fcm error", HttpStatus.INTERNAL_SERVER_ERROR);
-				});
-		}
-
-		if (messageTo2?.token) {
-			admin
-				.messaging()
-				.send(messageTo2)
-				.then((res) => {
-					console.log(res);
-				})
-				.catch((error) => {
-					console.log(error);
-					throw new HttpException("send push all fcm error", HttpStatus.INTERNAL_SERVER_ERROR);
-				});
-		}
-
-		if (messageTo3?.token) {
-			admin
-				.messaging()
-				.send(messageTo3)
-				.then((res) => {
-					console.log(res);
-				})
-				.catch((error) => {
-					console.log(error);
-					throw new HttpException("send push all fcm error", HttpStatus.INTERNAL_SERVER_ERROR);
-				});
-		}
+		// if (messageTo1?.token) {
+		// 	admin
+		// 		.messaging()
+		// 		.send(messageTo1)
+		// 		.then((res) => {
+		// 			console.log(res);
+		// 		})
+		// 		.catch((error) => {
+		// 			console.log(error);
+		// 			throw new HttpException("send push all fcm error", HttpStatus.INTERNAL_SERVER_ERROR);
+		// 		});
+		// }
+		//
+		// if (messageTo2?.token) {
+		// 	admin
+		// 		.messaging()
+		// 		.send(messageTo2)
+		// 		.then((res) => {
+		// 			console.log(res);
+		// 		})
+		// 		.catch((error) => {
+		// 			console.log(error);
+		// 			throw new HttpException("send push all fcm error", HttpStatus.INTERNAL_SERVER_ERROR);
+		// 		});
+		// }
+		//
+		// if (messageTo3?.token) {
+		// 	admin
+		// 		.messaging()
+		// 		.send(messageTo3)
+		// 		.then((res) => {
+		// 			console.log(res);
+		// 		})
+		// 		.catch((error) => {
+		// 			console.log(error);
+		// 			throw new HttpException("send push all fcm error", HttpStatus.INTERNAL_SERVER_ERROR);
+		// 		});
+		// }
 
 		admin
 			.messaging()
@@ -312,6 +312,11 @@ export class PostService {
 						user: true,
 					},
 				},
+				user: {
+					select: {
+						user: true,
+					},
+				},
 				book: true,
 			},
 		});
@@ -321,7 +326,8 @@ export class PostService {
 			book_id: e.book.book_id,
 			bookName: e.book.name,
 			bookURL: e.book.img,
-			name: e.attn.user.name,
+			attn_name: e.attn.user.name,
+			user_name: e.user.user.name,
 		}));
 	}
 
@@ -332,7 +338,17 @@ export class PostService {
 				attn_id: attn_id,
 				book_id: book_id,
 			},
+			include: {
+				attn: true,
+			},
 		});
+		const myChat2 = myChat.map((e) => ({
+			user_id: e.user_id,
+			attn_id: e.attn_id,
+			book_id: e.book_id,
+			nickname: e.attn.name,
+		}));
+		return myChat2;
 
 		const attnChat = await this.postRepository.chat.findMany({
 			where: {

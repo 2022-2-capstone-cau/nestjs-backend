@@ -20,7 +20,15 @@ export class AppService {
 		// if (!xx2) await this.prisma.userLib.create({ data: { user_id: 1, best_category: "IT" } });
 		// if (!xx3) await this.prisma.userLib.create({ data: { user_id: 1, best_category: "IT" } });
 		//
-		return await this.prisma.userLib.findMany({});
+		const user = await this.prisma.user.findMany({});
+		const userLib = await this.prisma.userLib.findMany({});
+		const book = await this.prisma.book.findMany({});
+
+		return {
+			user,
+			userLib,
+			book,
+		};
 	}
 
 	test() {

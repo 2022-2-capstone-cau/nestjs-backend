@@ -21,7 +21,9 @@ model User {
   user_info    UserStatus?
   user_setting UserSetting?
 
-  searchs Search[]
+  searchs  Search[]
+  chats_my Chat[]   @relation("userss")
+  attns_my Chat[]   @relation("attnss")
 
   @@index([email], type: Hash)
   @@map("USER")
@@ -127,6 +129,8 @@ model Chat {
   message String   @db.Text
 
   room Room @relation("room", fields: [user_id, attn_id, book_id], references: [user_id, attn_id, book_id])
+  user User @relation("userss", fields: [user_id], references: [user_id])
+  attn User @relation("attnss", fields: [attn_id], references: [user_id])
 
   @@map("CHAT")
 }
