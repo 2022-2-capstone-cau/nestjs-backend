@@ -136,6 +136,7 @@ model Rent {
   user_id Int       @db.Integer
   book_id Int       @db.Integer
   date    DateTime? @default(now()) @db.Timestamp(0)
+  status  Boolean   @default(false)
 
   user UserLib @relation(fields: [user_id], references: [user_id])
   book Book    @relation(fields: [book_id], references: [book_id], onDelete: Cascade)

@@ -250,6 +250,7 @@ export class PostService {
 
 		return data.map((e) => ({
 			attn_id: e.attn_id,
+			book_id: e.book.book_id,
 			bookName: e.book.name,
 			bookURL: e.book.img,
 			name: e.attn.user.name,
