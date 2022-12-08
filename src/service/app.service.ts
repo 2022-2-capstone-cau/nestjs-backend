@@ -22,7 +22,7 @@ export class AppService {
 		//
 		const user = await this.prisma.user.findMany({});
 		const userLib = await this.prisma.userLib.findMany({});
-		const book = await this.prisma.book.findMany({});
+		const book = await this.prisma.book.findMany({ include: { user: true, categories: true } });
 
 		return {
 			user,

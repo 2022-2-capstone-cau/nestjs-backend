@@ -148,7 +148,7 @@ export class UserService {
 
 	async getMyPage(user: JwtUserDto) {
 		const exUser: any = await this.userRepository.user.findUnique({
-			where: { email: user.email },
+			where: { user_id: Number(user.user_id) },
 			include: {
 				library: true,
 				user_info: true,
@@ -174,6 +174,10 @@ export class UserService {
 			orderBy: { book_id: "desc" },
 		});
 
+		const myCount = await this.userRepository.book.count({
+			where: { user_id: Number(user.user_id) },
+		});
+
 		return {
 			user: {
 				user_id: exUser.user_id,
@@ -184,7 +188,7 @@ export class UserService {
 				popularCategory: {
 					title: exUser.library.best_category,
 				},
-				numberOfOwn: exUser.library.book_total,
+				numberOfOwn: myCount,
 				numberOfRental: exUser.user_info.rental_total,
 			},
 			rents: exRent.map((e) => ({
