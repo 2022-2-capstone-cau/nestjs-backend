@@ -409,14 +409,6 @@ export class PostService {
 				book_id: Number(createMsgDto.book_id),
 			},
 		});
-		await this.postRepository.chat.create({
-			data: {
-				user_id: Number(createMsgDto.attn_id),
-				attn_id: Number(user.user_id),
-				message: createMsgDto.message,
-				book_id: Number(createMsgDto.book_id),
-			},
-		});
 
 		return {
 			user_id: newMsg.user_id,
