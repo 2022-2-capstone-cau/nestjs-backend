@@ -340,33 +340,22 @@ export class PostService {
 			},
 			include: {
 				attn: true,
+				user: true,
+			},
+			orderBy: {
+				date: "asc",
 			},
 		});
-		const myChat2 = myChat.map((e) => ({
+
+		return myChat.map((e) => ({
 			user_id: e.user_id,
+			user_name: e.user.name,
 			attn_id: e.attn_id,
+			attn_name: e.attn.name,
 			book_id: e.book_id,
-			nickname: e.attn.name,
+			message: e.message,
+			date: e.date,
 		}));
-		return myChat2;
-
-		const attnChat = await this.postRepository.chat.findMany({
-			where: {
-				user_id: attn_id,
-				attn_id: Number(user.user_id),
-				book_id: book_id,
-			},
-		});
-
-		const result = [...myChat, ...attnChat];
-
-		result.sort((a, b) => {
-			if (a.date > b.date) return 1;
-			else if (a.date < b.date) return -1;
-			else return 0;
-		});
-
-		return result;
 	}
 
 	async createChats(createMsgDto: CreateMsgDto, user: JwtUserDto) {
