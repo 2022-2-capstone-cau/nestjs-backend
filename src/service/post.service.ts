@@ -347,15 +347,52 @@ export class PostService {
 			},
 		});
 
-		return myChat.map((e) => ({
-			user_id: e.user_id,
-			user_name: e.user.name,
-			attn_id: e.attn_id,
-			attn_name: e.attn.name,
-			book_id: e.book_id,
-			message: e.message,
-			date: e.date,
-		}));
+		const attnChat = await this.postRepository.chat.findMany({
+			where: {
+				user_id: attn_id,
+				attn_id: Number(user.user_id),
+				book_id: book_id,
+			},
+			include: {
+				attn: true,
+				user: true,
+			},
+			orderBy: {
+				date: "asc",
+			},
+		});
+
+		const result = [
+			...myChat.map((e) => ({
+				user_id: e.user_id,
+				user_name: e.user.name,
+				attn_id: e.attn_id,
+				attn_name: e.attn.name,
+				book_id: e.book_id,
+				message: e.message,
+				date: e.date,
+			})),
+			...attnChat.map((e) => ({
+				user_id: e.user_id,
+				user_name: e.user.name,
+				attn_id: e.attn_id,
+				attn_name: e.attn.name,
+				book_id: e.book_id,
+				message: e.message,
+				date: e.date,
+			})),
+		];
+
+		return result.sort((a, b) => {
+			if (a.date > b.date) {
+				return 1;
+			}
+			if (a.date < b.date) {
+				return -1;
+			}
+			// a must be equal to b
+			return 0;
+		});
 	}
 
 	async createChats(createMsgDto: CreateMsgDto, user: JwtUserDto) {
@@ -408,13 +445,19 @@ export class PostService {
 				message: createMsgDto.message,
 				book_id: Number(createMsgDto.book_id),
 			},
+			include: {
+				user: true,
+				attn: true,
+			},
 		});
-
 		return {
 			user_id: newMsg.user_id,
+			user_name: newMsg.user.name,
 			attn_id: newMsg.attn_id,
-			date: newMsg.date,
+			attn_name: newMsg.attn.name,
+			book_id: newMsg.book_id,
 			message: newMsg.message,
+			date: newMsg.date,
 		};
 	}
 }
