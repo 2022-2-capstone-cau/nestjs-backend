@@ -12,17 +12,45 @@ export class AppService {
 	}
 
 	async updateAll() {
-		// const xx1 = await this.prisma.userLib.findUnique({ where: { user_id: 1 } });
-		// const xx2 = await this.prisma.userLib.findUnique({ where: { user_id: 2 } });
-		// const xx3 = await this.prisma.userLib.findUnique({ where: { user_id: 3 } });
-		//
-		// if (!xx1) await this.prisma.userLib.create({ data: { user_id: 1, best_category: "IT" } });
-		// if (!xx2) await this.prisma.userLib.create({ data: { user_id: 1, best_category: "IT" } });
-		// if (!xx3) await this.prisma.userLib.create({ data: { user_id: 1, best_category: "IT" } });
-		//
 		const user = await this.prisma.user.findMany({});
 		const userLib = await this.prisma.userLib.findMany({});
 		const book = await this.prisma.book.findMany({ include: { user: true, categories: true } });
+
+		await this.prisma.room.deleteMany();
+		await this.prisma.chat.deleteMany();
+
+		await this.prisma.room.create({
+			data: {
+				user_id: 1,
+				attn_id: 3,
+				book_id: 9,
+				last_message: "안녕하세요",
+			},
+		});
+		await this.prisma.room.create({
+			data: {
+				user_id: 3,
+				attn_id: 1,
+				book_id: 9,
+				last_message: "안녕하세요",
+			},
+		});
+		await this.prisma.chat.create({
+			data: {
+				user_id: 3,
+				attn_id: 1,
+				book_id: 9,
+				message: "안녕하세요",
+			},
+		});
+		await this.prisma.chat.create({
+			data: {
+				user_id: 1,
+				attn_id: 3,
+				book_id: 9,
+				message: "안녕하세요",
+			},
+		});
 
 		return {
 			user,
