@@ -16,8 +16,8 @@ export class AppService {
 		const userLib = await this.prisma.userLib.findMany({});
 		const book = await this.prisma.book.findMany({ include: { user: true, categories: true } });
 
-		await this.prisma.room.deleteMany();
 		await this.prisma.chat.deleteMany();
+		await this.prisma.room.deleteMany();
 
 		await this.prisma.room.create({
 			data: {
