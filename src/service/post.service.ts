@@ -254,6 +254,8 @@ export class PostService {
 	}
 
 	async rentBook(bookIdDto: BookIdDto, user: JwtUserDto) {
+		console.log(bookIdDto);
+
 		if (!bookIdDto.allow) {
 			return {
 				rent: false,
@@ -276,6 +278,25 @@ export class PostService {
 			data: {
 				user_id: Number(bookIdDto.attn_id),
 				book_id: Number(bookIdDto.book_id),
+			},
+		});
+
+		// room 생성
+		await this.postRepository.room.create({
+			data: {
+				user_id: Number(user.user_id),
+				attn_id: Number(bookIdDto.attn_id),
+				book_id: Number(bookIdDto.book_id),
+				last_message: "내용 없음",
+			},
+		});
+
+		await this.postRepository.room.create({
+			data: {
+				user_id: Number(bookIdDto.attn_id),
+				attn_id: Number(user.user_id),
+				book_id: Number(bookIdDto.book_id),
+				last_message: "내용 없음",
 			},
 		});
 
