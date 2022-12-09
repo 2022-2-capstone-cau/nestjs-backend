@@ -86,7 +86,14 @@ export class PostService {
 		}
 
 		const exCategory = await this.postRepository.category.findUnique({ where: { category: data.tags } });
-		const fcmTokens = await this.postRepository.user.findMany({
+		const fcmTokens1 = await this.postRepository.user.findUnique({
+			where: { user_id: 1 },
+			select: {
+				token: true,
+			},
+		});
+		const fcmTokens3 = await this.postRepository.user.findUnique({
+			where: { user_id: 3 },
 			select: {
 				token: true,
 			},
@@ -122,6 +129,46 @@ export class PostService {
 				topic: "all",
 			};
 
+			const message1 = {
+				notification: {
+					title: "Home Brary",
+					body: `${newBook.name} 책이 등록되었어요! 확인 해보세요!`,
+				},
+				token: fcmTokens1.token,
+			};
+
+			admin
+				.messaging()
+				.send(message1)
+				.then((res) => {
+					console.log(res);
+					return res;
+				})
+				.catch((error) => {
+					console.log(error);
+					throw new HttpException("send push all fcm error", HttpStatus.INTERNAL_SERVER_ERROR);
+				});
+
+			const message3 = {
+				notification: {
+					title: "Home Brary",
+					body: `${newBook.name} 책이 등록되었어요! 확인 해보세요!`,
+				},
+				token: fcmTokens3.token,
+			};
+
+			admin
+				.messaging()
+				.send(message3)
+				.then((res) => {
+					console.log(res);
+					return res;
+				})
+				.catch((error) => {
+					console.log(error);
+					throw new HttpException("send push all fcm error", HttpStatus.INTERNAL_SERVER_ERROR);
+				});
+
 			admin
 				.messaging()
 				.send(message)
@@ -136,6 +183,66 @@ export class PostService {
 
 			return { book_id: newBook.book_id };
 		}
+
+		const message = {
+			notification: {
+				title: "Home Brary",
+				body: `${newBook.name} 책이 등록되었어요! 확인 해보세요!`,
+			},
+			topic: "all",
+		};
+
+		const message1 = {
+			notification: {
+				title: "Home Brary",
+				body: `${newBook.name} 책이 등록되었어요! 확인 해보세요!`,
+			},
+			token: fcmTokens1.token,
+		};
+
+		admin
+			.messaging()
+			.send(message1)
+			.then((res) => {
+				console.log(res);
+				return res;
+			})
+			.catch((error) => {
+				console.log(error);
+				throw new HttpException("send push all fcm error", HttpStatus.INTERNAL_SERVER_ERROR);
+			});
+
+		const message3 = {
+			notification: {
+				title: "Home Brary",
+				body: `${newBook.name} 책이 등록되었어요! 확인 해보세요!`,
+			},
+			token: fcmTokens3.token,
+		};
+
+		admin
+			.messaging()
+			.send(message3)
+			.then((res) => {
+				console.log(res);
+				return res;
+			})
+			.catch((error) => {
+				console.log(error);
+				throw new HttpException("send push all fcm error", HttpStatus.INTERNAL_SERVER_ERROR);
+			});
+
+		admin
+			.messaging()
+			.send(message)
+			.then((res) => {
+				console.log(res);
+				return res;
+			})
+			.catch((error) => {
+				console.log(error);
+				throw new HttpException("send push all fcm error", HttpStatus.INTERNAL_SERVER_ERROR);
+			});
 
 		const newBook = await this.postRepository.book.create({
 			data: {
@@ -162,80 +269,6 @@ export class PostService {
 			},
 			topic: "all",
 		};
-
-		// const messageTo1 = {
-		// 	notification: {
-		// 		title: "Home Brary",
-		// 		body: `${newBook.name} 책이 등록되었어요! 확인 해보세요!`,
-		// 	},
-		// 	token: fcmTokens.map((e) => e.token)[0],
-		// };
-		//
-		// const messageTo2 = {
-		// 	notification: {
-		// 		title: "Home Brary",
-		// 		body: `${newBook.name} 책이 등록되었어요! 확인 해보세요!`,
-		// 	},
-		// 	token: fcmTokens.map((e) => e.token)[0],
-		// };
-		//
-		// const messageTo3 = {
-		// 	notification: {
-		// 		title: "Home Brary",
-		// 		body: `${newBook.name} 책이 등록되었어요! 확인 해보세요!`,
-		// 	},
-		// 	token: fcmTokens.map((e) => e.token)[0],
-		// };
-
-		// if (messageTo1?.token) {
-		// 	admin
-		// 		.messaging()
-		// 		.send(messageTo1)
-		// 		.then((res) => {
-		// 			console.log(res);
-		// 		})
-		// 		.catch((error) => {
-		// 			console.log(error);
-		// 			throw new HttpException("send push all fcm error", HttpStatus.INTERNAL_SERVER_ERROR);
-		// 		});
-		// }
-		//
-		// if (messageTo2?.token) {
-		// 	admin
-		// 		.messaging()
-		// 		.send(messageTo2)
-		// 		.then((res) => {
-		// 			console.log(res);
-		// 		})
-		// 		.catch((error) => {
-		// 			console.log(error);
-		// 			throw new HttpException("send push all fcm error", HttpStatus.INTERNAL_SERVER_ERROR);
-		// 		});
-		// }
-		//
-		// if (messageTo3?.token) {
-		// 	admin
-		// 		.messaging()
-		// 		.send(messageTo3)
-		// 		.then((res) => {
-		// 			console.log(res);
-		// 		})
-		// 		.catch((error) => {
-		// 			console.log(error);
-		// 			throw new HttpException("send push all fcm error", HttpStatus.INTERNAL_SERVER_ERROR);
-		// 		});
-		// }
-
-		admin
-			.messaging()
-			.send(messageAll)
-			.then((res) => {
-				console.log(res);
-			})
-			.catch((error) => {
-				console.log(error);
-				throw new HttpException("send push all fcm error", HttpStatus.INTERNAL_SERVER_ERROR);
-			});
 
 		return { book_id: newBook.book_id };
 	}
