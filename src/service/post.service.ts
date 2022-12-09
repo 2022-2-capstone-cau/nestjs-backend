@@ -449,6 +449,7 @@ export class PostService {
 
 		return {
 			rent: book,
+			attn_id: attn_id,
 			result: result.sort((a, b) => {
 				if (a.date > b.date) {
 					return 1;
