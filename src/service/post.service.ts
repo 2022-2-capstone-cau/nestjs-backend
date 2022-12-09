@@ -40,6 +40,7 @@ export class PostService {
 		}
 
 		return {
+			hi: data,
 			thumbnailUrl: "http://cover.nl.go.kr/" + data?.result[0]?.imageUrl,
 			title: data?.result[0]?.titleInfo,
 			desc: data?.result[0]?.titleInfo,
