@@ -127,6 +127,7 @@ model Chat {
   book_id Int      @db.Integer
   date    DateTime @default(now()) @db.Timestamp(0)
   message String   @db.Text
+  status  Boolean   @default(false)
 
   room Room @relation("room", fields: [user_id, attn_id, book_id], references: [user_id, attn_id, book_id])
   user User @relation("userss", fields: [user_id], references: [user_id])

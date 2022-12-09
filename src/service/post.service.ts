@@ -347,6 +347,15 @@ export class PostService {
 			},
 		});
 
+		const book = await this.postRepository.book.findUnique({
+			where: {
+				book_id: Number(book_id),
+			},
+			include: {
+				user: true,
+			},
+		});
+
 		const attnChat = await this.postRepository.chat.findMany({
 			where: {
 				user_id: attn_id,
@@ -383,16 +392,19 @@ export class PostService {
 			})),
 		];
 
-		return result.sort((a, b) => {
-			if (a.date > b.date) {
-				return 1;
-			}
-			if (a.date < b.date) {
-				return -1;
-			}
-			// a must be equal to b
-			return 0;
-		});
+		return {
+			rent: book,
+			result: result.sort((a, b) => {
+				if (a.date > b.date) {
+					return 1;
+				}
+				if (a.date < b.date) {
+					return -1;
+				}
+				// a must be equal to b
+				return 0;
+			}),
+		};
 	}
 
 	async createChats(createMsgDto: CreateMsgDto, user: JwtUserDto) {
