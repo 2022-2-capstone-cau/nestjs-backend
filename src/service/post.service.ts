@@ -184,6 +184,17 @@ export class PostService {
 			return { book_id: newBook.book_id };
 		}
 
+		const newBook = await this.postRepository.book.create({
+			data: {
+				img: data.thumbnailUrl,
+				name: data.title,
+				publisher: data.publisher,
+				ISPN: registerBookDto.isbn,
+				author: data.writer,
+				user_id: exUser.user_id,
+			},
+		});
+
 		const message = {
 			notification: {
 				title: "Home Brary",
@@ -243,17 +254,6 @@ export class PostService {
 				console.log(error);
 				throw new HttpException("send push all fcm error", HttpStatus.INTERNAL_SERVER_ERROR);
 			});
-
-		const newBook = await this.postRepository.book.create({
-			data: {
-				img: data.thumbnailUrl,
-				name: data.title,
-				publisher: data.publisher,
-				ISPN: registerBookDto.isbn,
-				author: data.writer,
-				user_id: exUser.user_id,
-			},
-		});
 
 		await this.postRepository.categoryBook.create({
 			data: {
