@@ -189,7 +189,7 @@ export class UserService {
 				popularCategory: {
 					title: exUser.library.best_category,
 				},
-				numberOfOwn: myCount,
+				numberOfOwn: myCount >= 0 ? myCount : -myCount,
 				numberOfRental: exUser.user_info.rental_total,
 			},
 			rents: exRent.map((e) => ({
