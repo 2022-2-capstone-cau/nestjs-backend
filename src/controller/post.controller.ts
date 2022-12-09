@@ -22,7 +22,7 @@ export class PostController {
 	@UseGuards(JwtAuthGuard)
 	@Post("/rent")
 	rentBookCli(@Body() bookId: BookIdDto, @Req() req) {
-		return this.postService.rentBookCli(bookId, req.user);
+		return this.postService.rentBook(bookId, req.user);
 	}
 
 	@UseGuards(JwtAuthGuard)
