@@ -167,6 +167,7 @@ export class UserService {
 				date: true,
 				book: true,
 			},
+			take: 7
 		});
 
 		const myBooks = await this.userRepository.book.findMany({
@@ -196,7 +197,7 @@ export class UserService {
 				thumbnailUrl: e.book.img,
 				title: e.book.name,
 				rentedAt: e.date,
-			})),
+			}),
 			owns: myBooks.map((e) => ({
 				book_id: e.book_id,
 				thumbnailUrl: e.img,
